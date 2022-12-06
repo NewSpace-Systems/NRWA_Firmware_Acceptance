@@ -31,24 +31,20 @@ namespace NRWA_Communication_Acceptance
                 File.Delete(filename);
             }
             File.Create(m_exePath + "\\" + filename).Close();
-            string[] Columns = new string[10] { "Data", "TX", "RX", "Data", "Message Control", "Field 1", "Field 2", "Field 3", "Field 4", "Field 5" };
+            string[] Columns = new string[6] { "Command", "Test", "TX", "RX", "Data", "Pass" };
             Log(Columns, m_exePath, filename);
 
         }
 
-        public static void AppendLog(string sSelectedPath, string sFilename, string sTX, string sRx, string sData, string sCommand, string sField1, string sField2, string sField3, string sField4, string sField5)
+        public static void AppendLog(string sSelectedPath, string sFilename, string sCommand, string sTest, string sTx, string sRx, string sData, string sPassFail)
         {
-            string[] sLog = { "", "", "", "", "", "", "", "", "", "" };
-            sLog[0] = DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
-            sLog[1] = sTX;
-            sLog[2] = sRx;
-            sLog[3] = sData;
-            sLog[4] = sCommand;
-            sLog[5] = sField1;
-            sLog[6] = sField2;
-            sLog[7] = sField3;
-            sLog[8] = sField4;
-            sLog[9] = sField5;
+            string[] sLog = { "", "", "", "", "", ""};
+            sLog[0] = sCommand;
+            sLog[1] = sTest;
+            sLog[2] = sTx;
+            sLog[3] = sRx;
+            sLog[4] = sData;
+            sLog[5] = sPassFail;
 
             LogWriter.Log(sLog, sSelectedPath, sFilename);
 

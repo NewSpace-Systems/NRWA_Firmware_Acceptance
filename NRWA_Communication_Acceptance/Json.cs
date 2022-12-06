@@ -13,10 +13,10 @@ namespace NRWA_Communication_Acceptance
         public static string ReadJsonFile(string jsonFileIn)
         {
             string jsonReturn = "";
-            dynamic jsonFile = JsonConvert.DeserializeObject(File.ReadAllText(jsonFileIn));
+            //Root myDeserializedClass = JsonConvert.DeserializeObject(myJsonResponse);
 
-            JToken creator = jsonFile.SelectToken("creator");
-            jsonReturn += creator.ToString();
+            //JToken creator = jsonFile.SelectToken("creator");
+            //jsonReturn += creator.ToString();
 
             return jsonReturn;
         }

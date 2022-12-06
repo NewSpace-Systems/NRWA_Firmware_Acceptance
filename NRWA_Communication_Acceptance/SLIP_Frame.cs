@@ -241,12 +241,4 @@ namespace NRWA_Communication_Acceptance
         }
     }
 
-
-
-
-
-
-
-
-
 }

@@ -21,13 +21,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("PING");
+            _Port.ReadTimeout = 500;
+           // Console.WriteLine("PING");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bPING, null);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -37,7 +37,14 @@ namespace NRWA_Communication_Acceptance
                     if (Data != null)
                     {
                         Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else 
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+                        
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC, bChkCRC);
+
                     }
                     else
                     {
@@ -60,13 +67,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("PEEK");
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("PEEK");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bPEEK, bCommand);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -75,7 +82,14 @@ namespace NRWA_Communication_Acceptance
 
                     if (Data != null)
                     {
-                        Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PEEK-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PEEK-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
                     }
                     else
@@ -99,13 +113,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("POKE");
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("POKE");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bPOKE, bCommand);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -114,7 +128,14 @@ namespace NRWA_Communication_Acceptance
 
                     if (Data != null)
                     {
-                        Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " " + BitConverter.ToString(bChkCRC), "False"); }
+
+
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
                     }
                     else
@@ -138,13 +159,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("SYSTEM TELEMETRY");
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("SYSTEM TELEMETRY");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bSYS_TELEMETRY, bCommand);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -153,7 +174,14 @@ namespace NRWA_Communication_Acceptance
 
                     if (Data != null)
                     {
-                        Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "SYSTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "SYSTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+
+
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
                     }
                     else
@@ -177,13 +205,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("APPLICATION TELEMETRY");
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("APPLICATION TELEMETRY");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bAPP_TELEMETRY, bCommand);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -192,7 +220,14 @@ namespace NRWA_Communication_Acceptance
 
                     if (Data != null)
                     {
-                        Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " " + BitConverter.ToString(bChkCRC), "False"); }
+
+
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
                     }
                     else
@@ -216,13 +251,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("APPLICATION COMMAND");
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("APPLICATION COMMAND");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bAPP_COMMAND, bCommand);
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(100);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -231,7 +266,14 @@ namespace NRWA_Communication_Acceptance
 
                     if (Data != null)
                     {
-                        Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPCOM-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPCOM-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+
+
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
                     }
                     else
@@ -255,21 +297,28 @@ namespace NRWA_Communication_Acceptance
         {
             int iReadbytes = 0;
             byte[] Buffer = new byte[260];
-            _Port.DtrEnable = true;
-            _Port.Open();
-            _Port.ReadTimeout = 1500;
-            Console.WriteLine("PING");
+            
+            try
+            {
+                _Port.DtrEnable = true;
+                _Port.Open();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Port not selected");
+            }
+            
 
             try
             {
                 _Port.Write(TX_Message, 0, TX_Message.Length);
-                System.Threading.Thread.Sleep(500);
-                _Port.ReadTimeout = 2000;
+                System.Threading.Thread.Sleep(100);
+                _Port.ReadTimeout = 1000;
                 while (iReadbytes == 0)
                 {
                     iReadbytes = _Port.Read(Buffer, 0, 260);
                 }
-                }
+            }
             catch (Exception ex)
             {
                 _Port.Close();
@@ -280,5 +329,43 @@ namespace NRWA_Communication_Acceptance
             return (Buffer);
         }
 
+        public static (bool, bool, string, byte[], byte[], byte[], byte[], byte[]) cmnd_Incorrect(SerialPort _Port, byte bAddress, byte bSource, byte bCommand)
+        {
+            _Port.DtrEnable = true;
+            _Port.Open();
+            _Port.ReadTimeout = 500;
+            //Console.WriteLine("INCORRECT");
+
+            try
+            {
+                (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, bAddress, bSource, bCommand, null);
+                System.Threading.Thread.Sleep(100);
+                if (bSuccess == true)
+                {
+                    (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
+
+                    _Port.Close();
+
+                    if (Data != null)
+                    {
+                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC, bChkCRC);
+                    }
+                    else
+                    {
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, null, null, null);
+                    }
+                }
+                else
+                {
+                    return (bSuccess, false, sWFeedback, a_TX, null, null, null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, false, ex.Message, null, null, null, null, null);
+            }
+
+        }
     }
 }
