@@ -30,6 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbEdgeCases = new System.Windows.Forms.CheckBox();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.cbAppTelData = new System.Windows.Forms.CheckBox();
             this.cbInitial = new System.Windows.Forms.CheckBox();
             this.cbAll = new System.Windows.Forms.CheckBox();
@@ -59,7 +61,9 @@
             this.btnPortCon = new System.Windows.Forms.Button();
             this.btnLog = new System.Windows.Forms.Button();
             this.lblLog = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.cbNRWA = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -79,6 +83,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cbEdgeCases);
             this.tabPage1.Controls.Add(this.progressBar);
             this.tabPage1.Controls.Add(this.cbAppTelData);
             this.tabPage1.Controls.Add(this.cbInitial);
@@ -101,6 +106,24 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Automatic";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cbEdgeCases
+            // 
+            this.cbEdgeCases.AutoSize = true;
+            this.cbEdgeCases.Location = new System.Drawing.Point(25, 381);
+            this.cbEdgeCases.Name = "cbEdgeCases";
+            this.cbEdgeCases.Size = new System.Drawing.Size(104, 20);
+            this.cbEdgeCases.TabIndex = 14;
+            this.cbEdgeCases.Text = "Edge Cases";
+            this.cbEdgeCases.UseVisualStyleBackColor = true;
+            this.cbEdgeCases.CheckedChanged += new System.EventHandler(this.cbEdgeCases_CheckedChanged);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(860, 676);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(815, 26);
+            this.progressBar.TabIndex = 13;
             // 
             // cbAppTelData
             // 
@@ -139,7 +162,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(25, 16);
+            this.button1.Location = new System.Drawing.Point(31, 20);
             this.button1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(148, 33);
@@ -364,7 +387,7 @@
             // cbPorts
             // 
             this.cbPorts.FormattingEnabled = true;
-            this.cbPorts.Location = new System.Drawing.Point(12, 23);
+            this.cbPorts.Location = new System.Drawing.Point(133, 28);
             this.cbPorts.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbPorts.Name = "cbPorts";
             this.cbPorts.Size = new System.Drawing.Size(116, 24);
@@ -375,7 +398,7 @@
             // 
             this.btnPortCon.FlatAppearance.BorderColor = System.Drawing.SystemColors.ActiveBorder;
             this.btnPortCon.FlatAppearance.BorderSize = 4;
-            this.btnPortCon.Location = new System.Drawing.Point(152, 18);
+            this.btnPortCon.Location = new System.Drawing.Point(273, 23);
             this.btnPortCon.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnPortCon.Name = "btnPortCon";
             this.btnPortCon.Size = new System.Drawing.Size(148, 33);
@@ -403,18 +426,46 @@
             this.lblLog.Size = new System.Drawing.Size(0, 16);
             this.lblLog.TabIndex = 5;
             // 
-            // progressBar
+            // cbNRWA
             // 
-            this.progressBar.Location = new System.Drawing.Point(860, 676);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(815, 26);
-            this.progressBar.TabIndex = 13;
+            this.cbNRWA.FormattingEnabled = true;
+            this.cbNRWA.Items.AddRange(new object[] {
+            "DRV110",
+            "T32",
+            "T6"});
+            this.cbNRWA.Location = new System.Drawing.Point(626, 28);
+            this.cbNRWA.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.cbNRWA.Name = "cbNRWA";
+            this.cbNRWA.Size = new System.Drawing.Size(116, 24);
+            this.cbNRWA.TabIndex = 6;
+            this.cbNRWA.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(473, 31);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(135, 16);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Select NRWA Varient";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 31);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 16);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Select Port";
             // 
             // NRWA_FirmVer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1735, 831);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.cbNRWA);
             this.Controls.Add(this.lblLog);
             this.Controls.Add(this.btnLog);
             this.Controls.Add(this.btnPortCon);
@@ -470,6 +521,10 @@
         private System.Windows.Forms.CheckBox cbInitial;
         private System.Windows.Forms.CheckBox cbAppTelData;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.ComboBox cbNRWA;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox cbEdgeCases;
     }
 }
 

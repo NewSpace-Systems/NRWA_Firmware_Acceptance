@@ -21,13 +21,13 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
            // Console.WriteLine("PING");
 
             try
             {
                 (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bPING, null);
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(200);
                 if (bSuccess == true)
                 {
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
@@ -38,10 +38,10 @@ namespace NRWA_Communication_Acceptance
                     {
                         Console.WriteLine("DATA: " + BitConverter.ToString(Data));
 
-                        if (bRecCRC.SequenceEqual(bChkCRC))
-                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
-                        else 
-                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+                        //if (bRecCRC.SequenceEqual(bChkCRC))
+                        //{ LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        //else 
+                        //{ LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PING-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
                         
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC, bChkCRC);
 
@@ -67,7 +67,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("PEEK");
 
             try
@@ -113,7 +113,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("POKE");
 
             try
@@ -159,7 +159,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("SYSTEM TELEMETRY");
 
             try
@@ -205,7 +205,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("APPLICATION TELEMETRY");
 
             try
@@ -251,7 +251,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("APPLICATION COMMAND");
 
             try
@@ -313,7 +313,7 @@ namespace NRWA_Communication_Acceptance
             {
                 _Port.Write(TX_Message, 0, TX_Message.Length);
                 System.Threading.Thread.Sleep(100);
-                _Port.ReadTimeout = 1000;
+                _Port.ReadTimeout = 250;
                 while (iReadbytes == 0)
                 {
                     iReadbytes = _Port.Read(Buffer, 0, 260);
@@ -333,7 +333,7 @@ namespace NRWA_Communication_Acceptance
         {
             _Port.DtrEnable = true;
             _Port.Open();
-            _Port.ReadTimeout = 500;
+            _Port.ReadTimeout = 250;
             //Console.WriteLine("INCORRECT");
 
             try

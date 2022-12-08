@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -31,9 +32,11 @@ namespace NRWA_Communication_Acceptance
         public byte[] TX_tooMuchData;
         public List<int[]> l_iFormat = new List<int[]>();
 
-        public static byte[] AppTelBlock0 = new byte[31];
-        public static byte[] AppTelBlock1 = new byte[56];
-        public static byte[] AppTelBlock2 = new byte[100];
+
+
+        public static List<byte[]> l_AppTelBlock = new List<byte[]>();
+
+        public static Root NRWAvarObjects;
 
         // Dictionary for Datafield formatting of different addresses
         // returns [places before comma, decimal places] of a 32 bit format
@@ -193,6 +196,7 @@ namespace NRWA_Communication_Acceptance
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         public class Datum
         {
             public string field { get; set; }
@@ -230,7 +234,6 @@ namespace NRWA_Communication_Acceptance
 
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
         // Returns randomized 32 bit value based on range sent 
         // iVal: number of bytes before comma
@@ -454,6 +457,7 @@ namespace NRWA_Communication_Acceptance
             {
                 for (int i = 0; i < 3; i++)
                 {
+                   
                     systelcom.Add(new List<string>());
                     sTXsystel = "";
                     sRXsystel = "";
@@ -464,47 +468,21 @@ namespace NRWA_Communication_Acceptance
                     byte[] b_ValueRX = new byte[1];
                     b_ValueRX[0] = (byte)i;
                     (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_AppTel(NRWA_FirmVer._serialPort, 0x07, 0x11, b_ValueRX);
-                    switch (i)
+                    
+                    if (bFound)
                     {
-                        case 0:
-                            if (Data.Length != 31)
-                            { 
-                                bPass = false;
-                            }
-                            else
-                            {
-                                AppTelBlock0 = Data;
-                                sData = BitConverter.ToString(Data);
-                                bPass = true;
-                            }
-                            break;
-                        case 1:
-                            if (Data.Length != 56)
-                            {
-                                bPass = false;
-                            }
-                            else
-                            {
-                                AppTelBlock1 = Data;
-                                sData = BitConverter.ToString(Data);
-                                bPass = true;
-                            }
-                            break;
-                        case 2:
-                            if (Data.Length != 100)
-                            {
-                                bPass = false;
-                            }
-                            else
-                            {
-                                AppTelBlock2 = Data;
-                                sData = BitConverter.ToString(Data);
-                                bPass = true;
-                            }
-                            break;
-                        
+                        if (Data.Length != NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].lenght)
+                        {
+                            bPass = false;
+                        }
+                        else
+                        {
+                            l_AppTelBlock.Add(Data);
+                            sData = BitConverter.ToString(Data);
+                            bPass = true;
+                        }
                     }
-
+                     
                     try { sTXsystel = BitConverter.ToString(a_TX); }
                     catch { sTXsystel = ""; throw new Exception(); }
                     try { sRXsystel = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
@@ -884,250 +862,205 @@ namespace NRWA_Communication_Acceptance
         public static List<List<string>> AddressSpecificCases()
         {
             List<List<string>> addSpecCase = new List<List<string>>();
-            int i = 0;
-            if (AppTelBlock0 != null)
+
+            string j_field;
+            int j_lenght;
+            List<int> j_format;
+            string j_initial;
+            double Initial;
+            double Value;
+            byte[] b_value;
+            byte[] b_data;
+            int k = 0;
+
+
+            for (int i = 0; i < 3; i++ )
             {
-                //Status Register
-                byte[] bStatusRegister = AppTelBlock0.Skip(0).Take(4).ToArray();
-                BitArray bits_StatusReg = new BitArray(bStatusRegister);
-                addSpecCase.Add(new List<string>());
-                addSpecCase[i].Add("");//TX
-                addSpecCase[i].Add("");//RX
+                try
+                {
+                    if (l_AppTelBlock[i].Length == NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].lenght)
+                    {
+                        int idata = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data.Count;
+                        int iPos = 0;
+                        for (int j = 0; j < idata; j++)
+                        {
+                            addSpecCase.Add(new List<string>());
+
+                            j_field = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field;
+                            j_lenght = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].lenght;
+                            j_format = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].format;
+                            j_initial = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].initial;
+                            b_data = l_AppTelBlock[i].Skip(iPos).Take(j_lenght).ToArray();
+                            b_value = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
+
+                            if (j_lenght == 1)
+                            { b_value[3] = b_data[0]; }
+                            if (j_lenght == 2)
+                            {
+                                b_value[3] = b_data[1];
+                                b_value[2] = b_data[0];
+                            }
+                            if (j_lenght == 3)
+                            {
+                                b_value[3] = b_data[2];
+                                b_value[2] = b_data[1];
+                                b_value[1] = b_data[0];
+                            }
+                            if (j_lenght == 4)
+                            {
+                                b_value[3] = b_data[3];
+                                b_value[2] = b_data[2];
+                                b_value[1] = b_data[1];
+                                b_value[0] = b_data[0];
+                            }
 
 
-                byte[] bMotorRegister = AppTelBlock0.Skip(4).Take(1).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bControlSetpoint = AppTelBlock0.Skip(5).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bPWMdutyCycle = AppTelBlock0.Skip(7).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bCurrentControlTarget = AppTelBlock0.Skip(9).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bCurrentMeasurement = AppTelBlock0.Skip(11).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bSpeedMeasurement = AppTelBlock0.Skip(15).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bMotorDriverPower = AppTelBlock0.Skip(19).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bDcDcTemperature = AppTelBlock0.Skip(23).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bFPGATemperature = AppTelBlock0.Skip(25).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bMotorTemperature = AppTelBlock0.Skip(27).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bMotorDriverTemperature = AppTelBlock0.Skip(29).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-            }
+                            if (j_initial != "")
+                            {
+                                Initial = Convert.ToDouble(j_initial.Replace('.',','));
+                                Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
 
-            if (AppTelBlock1 != null)
-            {
-                byte[] bStatusRegister = AppTelBlock1.Skip(0).Take(4).ToArray();
-                BitArray bits_StatusReg = new BitArray(bStatusRegister);
-                addSpecCase.Add(new List<string>());
+                                if (0.95 * Initial <= Value && 1.05 * Initial >= Value)
+                                {
+                                    addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
+                                    addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
+                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: " + Initial.ToString().Replace(',', '.'));
+                                    addSpecCase[k].Add("TRUE");
+                                }
+                                else
+                                {
+                                    addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
+                                    addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
+                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: " + Initial.ToString().Replace(',', '.'));
+                                    addSpecCase[k].Add("FALSE");
+                                }
 
-                //DC-DC Temperature
-                byte[] bDcDcTemperature = AppTelBlock1.Skip(4).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[1].Add("APP-TEL-02");
-                addSpecCase[1].Add("DC-DC-Temperature");
-                Array.Reverse(bDcDcTemperature);
-                double temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4 );
-                addSpecCase[1].Add("Expected: 18-30 Received: " + temp.ToString());
-                if (temp <= 30 && temp >= 18)
-                { addSpecCase[1].Add("TRUE"); }
-                else { addSpecCase[1].Add("FALSE"); }
+                            }
+                            else
+                            {
+                                Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
+                                addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
+                                addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
+                                addSpecCase[k].Add("");
+                                addSpecCase[k].Add("");
+                                addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: -");
+                                addSpecCase[k].Add("TRUE");
+                            }
+                            k++;
+                            iPos = iPos + j_lenght;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
 
-                //FPGA Temperature
-                byte[] bFPGATemperature = AppTelBlock1.Skip(6).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[2].Add("APP-TEL-02");
-                addSpecCase[2].Add("FPGA-Temperature");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[2].Add("Expected: * Received: " + temp.ToString());
-                addSpecCase[2].Add("TRUE");
-
-                //Motor Temperature
-                byte[] bMotorTemperature = AppTelBlock1.Skip(8).Take(2).ToArray(); 
-                addSpecCase.Add(new List<string>());
-                addSpecCase[2].Add("APP-TEL-02");
-                addSpecCase[2].Add("Motor-Temperature");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[2].Add("Expected: * Received: " + temp.ToString());
-                addSpecCase[2].Add("TRUE");
-
-                //Motor Driver Temperature
-                byte[] bMotorDriverTemperature = AppTelBlock1.Skip(10).Take(2).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[3].Add("APP-TEL-02");
-                addSpecCase[3].Add("Motor-Driver-Temperature");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[3].Add("Expected: * Received: " + temp.ToString());
-                addSpecCase[3].Add("TRUE");
-
-                //1V5 Power supply
-                byte[] b1V5 = AppTelBlock1.Skip(12).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[4].Add("APP-TEL-02");
-                addSpecCase[4].Add("1V5 Power Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[4].Add("Expected: 1.425-1.575 Received: " + temp.ToString());
-                if (temp <= 1.425 && temp >= 1.575)
-                { addSpecCase[4].Add("TRUE"); }
-                else { addSpecCase[4].Add("FALSE"); }
-
-                //3V3 Power supply
-                byte[] b3V3Voltage = AppTelBlock1.Skip(16).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[5].Add("APP-TEL-02");
-                addSpecCase[5].Add("3V3 Power Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[5].Add("Expected: 3.135-3.465 Received: " + temp.ToString());
-                if (temp <= 3.135 && temp >= 3.465)
-                { addSpecCase[5].Add("TRUE"); }
-                else { addSpecCase[5].Add("FALSE"); }
-
-                //5V Power supply
-                byte[] b5VVoltage = AppTelBlock1.Skip(20).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[6].Add("APP-TEL-02");
-                addSpecCase[6].Add("5V Power Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[6].Add("Expected: 4.75-5.25 Received: " + temp.ToString());
-                if (temp <= 4.75 && temp >= 5.25)
-                { addSpecCase[6].Add("TRUE"); }
-                else { addSpecCase[6].Add("FALSE"); }
-
-                //12V Power supply
-                byte[] b12VVoltage = AppTelBlock1.Skip(24).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[7].Add("APP-TEL-02");
-                addSpecCase[7].Add("12V Power Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[7].Add("Expected: 11.4-12.6 Received: " + temp.ToString());
-                if (temp <= 11.4 && temp >= 12.6)
-                { addSpecCase[7].Add("TRUE"); }
-                else { addSpecCase[7].Add("FALSE"); }
-
-                //24V Power supply
-                byte[] b24VVoltage = AppTelBlock1.Skip(28).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[8].Add("APP-TEL-02");
-                addSpecCase[8].Add("24V Power Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[8].Add("Expected: 22.8-25.2 Received: " + temp.ToString());
-                if (temp <= 22.8 && temp >= 25.2)
-                { addSpecCase[8].Add("TRUE"); }
-                else { addSpecCase[8].Add("FALSE"); }
-
-                //1V5 Current supply
-                byte[] b1V5Current = AppTelBlock1.Skip(32).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                addSpecCase[9].Add("APP-TEL-02");
-                addSpecCase[9].Add("1V5 Current Supply");
-                Array.Reverse(bDcDcTemperature);
-                temp = intToQ((int)BitConverter.ToUInt32(bDcDcTemperature, 0), 4);
-                addSpecCase[9].Add("Expected: * Received: " + temp.ToString());
-                addSpecCase[9].Add("TRUE");
-
-                byte[] b3V3Current = AppTelBlock1.Skip(36).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] b5VCurrent = AppTelBlock1.Skip(40).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] b12VCurrent = AppTelBlock1.Skip(44).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] b24VCurrent = AppTelBlock1.Skip(48).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] b24VSensCurrent = AppTelBlock1.Skip(52).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-            }
-
-            if (AppTelBlock2 != null)
-            {
-                byte[] bStatusRegister = AppTelBlock2.Skip(0).Take(4).ToArray();
-                BitArray bits_StatusReg = new BitArray(bStatusRegister);
-                addSpecCase.Add(new List<string>());
-
-                byte[] bUpTime = AppTelBlock2.Skip(4).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bCorrSUEcnt = AppTelBlock2.Skip(8).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bErrSUEcnt = AppTelBlock2.Skip(12).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bWriteUse = AppTelBlock2.Skip(16).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bReadUse = AppTelBlock2.Skip(20).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bScrub = AppTelBlock2.Skip(24).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRdxReceived = AppTelBlock2.Skip(28).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRdxReceived = AppTelBlock2.Skip(32).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bTdxTransmitted = AppTelBlock2.Skip(36).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brTdxTransmitted = AppTelBlock2.Skip(40).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRxdUartErr = AppTelBlock2.Skip(44).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRxdUartErr = AppTelBlock2.Skip(48).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRxdNspAckCnt = AppTelBlock2.Skip(52).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRxdNspAckCnt = AppTelBlock2.Skip(56).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRxdSlipErrCnt = AppTelBlock2.Skip(60).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRxdSlipErrCnt = AppTelBlock2.Skip(64).Take(4).ToArray();
-                addSpecCase.Add(new List<string>()); 
-                byte[] bRxdCrcErrCnt = AppTelBlock2.Skip(68).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRxdCrcErrCnt = AppTelBlock2.Skip(72).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRxdNspDiscCnt = AppTelBlock2.Skip(76).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] brRxdNspDiscCnt = AppTelBlock2.Skip(80).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bRevCnt = AppTelBlock2.Skip(84).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bHallSkipCnt = AppTelBlock2.Skip(88).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bDrvFaultCnt = AppTelBlock2.Skip(92).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
-                byte[] bDrvOverCnt = AppTelBlock2.Skip(96).Take(4).ToArray();
-                addSpecCase.Add(new List<string>());
+                
             }
 
             return addSpecCase;
         }
 
+        public static List<List<string>> EdgeCases()
+        {
+            List<List<string>> edgeCase = new List<List<string>>();
+            byte[] bValue = new byte[4]  { 0x00, 0xdb, 0xdc, 0xc0 };
+            byte[] rDataPeek = null;
+            bool bPass = false;
+            string sTXpoke, sRXpeek, sCommand, sData;
+
+            for (int i = 0; i < NRWA_FirmVer.l_NRWACommands.Count; i++)
+            {
+                if (NRWA_FirmVer.l_NRWACommands[i].bCommand == 0x82)
+                {
+                    edgeCase.Add(new List<string>());
+                    sTXpoke = "";
+                    sRXpeek = "";
+                    sData = "";
+                    bPass = false;
+                    sCommand = "";
+                    try
+                    {
+
+                        byte[] b_ValueRX = new byte[1];
+                        b_ValueRX[0] = NRWA_FirmVer.l_NRWACommands[i].bAddress;
+
+                        byte[] b_ValueTX = new byte[5];
+                        b_ValueTX[0] = NRWA_FirmVer.l_NRWACommands[i].bAddress;
+                        b_ValueTX[1] = bValue[0];
+                        b_ValueTX[2] = bValue[1];
+                        b_ValueTX[3] = bValue[2];
+                        b_ValueTX[4] = bValue[3];
+
+
+                        (bool bFoundPoke, bool bAckPoke, string sRFeedbackPoke, byte[] a_TXPoke, byte[] a_RXPoke, byte[] DataPoke, byte[] bRecCRCPoke) = NRWA_Cmnds.cmnd_Poke(NRWA_FirmVer._serialPort, 0x07, 0x11, b_ValueTX);
+                        try { sTXpoke = BitConverter.ToString(a_TXPoke); }
+                        catch { sTXpoke = ""; throw new Exception(); };
+                        (bool bFoundPeek, bool bAckPeek, string sRFeedbackPeek, byte[] a_TXPeek, byte[] a_RXPeek, byte[] DataPeek, byte[] bRecCRCPeek) = NRWA_Cmnds.cmnd_Peek(NRWA_FirmVer._serialPort, 0x07, 0x11, b_ValueRX);
+                        try { sRXpeek = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RXPeek)); }
+                        catch { sRXpeek = ""; throw new Exception(); }
+
+                        if (bValue.SequenceEqual(DataPeek))
+                        {
+                            bPass = true;
+                            rDataPeek = DataPeek;
+                        }
+                        else
+                        {
+                            bPass = false;
+                            rDataPeek = DataPeek;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        bPass = false;
+                    }
+
+                    edgeCase[edgeCase.Count - 1].Add(sTXpoke);
+                    edgeCase[edgeCase.Count - 1].Add(sRXpeek);
+                    edgeCase[edgeCase.Count - 1].Add("Expected: " + BitConverter.ToString(bValue)  + " Received: " + BitConverter.ToString(rDataPeek));
+                    edgeCase[edgeCase.Count - 1].Add(bPass.ToString());
+                    edgeCase[edgeCase.Count - 1].Add(sCommand);
+                }
+            }
+
+            return edgeCase;
+        }
+
         //--------------------------------------------------------------------------------
         public static double Get32BitValueAddress(byte address, byte[] data)
         {
-            if (data != null)
+            try
             {
-                byte[] Value = data;
-                int[] iBitPlaces = AddressFormatting[address];
+                if (data != null)
+                {
+                    byte[] Value = data;
+                    int[] iBitPlaces = AddressFormatting[address];
 
-                Array.Reverse(Value);
-                uint uiValue = BitConverter.ToUInt32(Value, 0);
-                int returnValue = (int)uiValue;
-                return intToQ((int)returnValue, iBitPlaces[1]);
+                    Array.Reverse(Value);
+                    uint uiValue = BitConverter.ToUInt32(Value, 0);
+                    int returnValue = (int)uiValue;
+                    return intToQ((int)returnValue, iBitPlaces[1]);
+                }
+                else
+                {
+                    throw new Exception("no data");
+                }
             }
-            else
+            catch (Exception)
             {
-                throw new Exception("no data");
-            }            
+
+                throw new Exception("Get32BitValueAddress Error");
+            }
+                
         }
 
-        public static double Get32BitValueSpecified(int iBefore, int iAfter, byte[] data)
+        public static double Get32BitValueSpecified(int iAfter, byte[] data)
         {
             if (data != null)
             {

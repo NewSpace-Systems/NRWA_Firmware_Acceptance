@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net;
@@ -22,7 +23,8 @@ namespace NRWA_Communication_Acceptance
     public partial class NRWA_FirmVer : Form
     {
         bool bLogging = false;
-        static string url = "";
+        static string path = "";
+
         static HttpClient httpClient = new HttpClient();
 
         public static string sSelectedPath;
@@ -32,6 +34,7 @@ namespace NRWA_Communication_Acceptance
         public static SerialPort _serialPort;
 
         BackgroundWorker bgWorker;
+        
 
         public NRWA_FirmVer()
         {
@@ -41,6 +44,7 @@ namespace NRWA_Communication_Acceptance
             cbPorts.Items.Clear();
             cbPorts.Items.AddRange(ports);
             cbPorts.SelectedIndex = 0;
+            cbNRWA.SelectedIndex = 0;
 
         }
 
@@ -56,12 +60,20 @@ namespace NRWA_Communication_Acceptance
             _serialPort.StopBits = StopBits.One;
             _serialPort.ReadTimeout = 10000;
             
-
             try
             {
                 _serialPort.Open();
                 _serialPort.Close();
                 this.btnPortCon.ForeColor = System.Drawing.Color.Green;
+
+                (bool bFindSLIP, bool bACK, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = NRWA_Cmnds.cmnd_Ping(_serialPort, 0x07, 0x11);
+                ShowSerialData("Device Type: " + ((uint)Data[0]).ToString());
+                ShowSerialData("Device Serial Number: " + ((uint)Data[1]).ToString());
+                ShowSerialData("Firmware Revision: " + ((uint)Data[2]).ToString());
+                ShowSerialData("Firmware Release: " + ((uint)Data[3]).ToString());
+                ShowSerialData("Firmware Patch: " + ((uint)Data[4]).ToString());
+                ShowSerialData(" ");
+
             }
             catch (Exception ex)
             {
@@ -93,14 +105,15 @@ namespace NRWA_Communication_Acceptance
             }
         }
 
-        private void Verify(int iStep)
+        private async void Verify(int iStep)
         {
             int iProgress = 0;
 
             if (cbInitial.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Initial Values");
+                //ShowSerialData("Initial Values");
+                await Task.Run(() => ShowSerialData("Initial Values"));
                 List<List<string>> autoInitPeek = AutoCommands.PeekInitialValues();
                 for (int i = 0; i < autoInitPeek.Count; i++)
                 {
@@ -112,7 +125,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPeekPoke.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto Peek-Poke");
+                //ShowSerialData("Auto Peek-Poke");
+                await Task.Run(() => ShowSerialData("Auto Peek-Poke"));
                 List<List<string>> autoPeekPoke = AutoCommands.PokePeek();
                 for (int i = 0; i < autoPeekPoke.Count; i++)
                 {
@@ -123,7 +137,8 @@ namespace NRWA_Communication_Acceptance
             if (cbSystemTelemetryDataCast.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto System Telemetry Read");
+                //ShowSerialData("Auto System Telemetry Read");
+                await Task.Run(() => ShowSerialData("Auto System Telemetry Read"));
                 List<List<string>> autoSysTelRead = AutoCommands.SysTel();
                 for (int i = 0; i < autoSysTelRead.Count; i++)
                 {
@@ -134,7 +149,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPeekOutsideAd.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto Peek Outside Address Range");
+                //ShowSerialData("Auto Peek Outside Address Range");
+                await Task.Run(() => ShowSerialData("Auto Peek Outside Address Range"));
                 List<List<string>> autoPeekOutRange = AutoCommands.PeekOutsideAddressRanges();
                 for (int i = 0; i < autoPeekOutRange.Count; i++)
                 {
@@ -146,7 +162,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPokeOutsideAd.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto Poke Outside Address Range");
+                //ShowSerialData("Auto Poke Outside Address Range");
+                await Task.Run(() => ShowSerialData("Auto Poke Outside Address Range"));
                 List<List<string>> autoPokeOutRange = AutoCommands.PokeOutsideAddressRanges();
                 for (int i = 0; i < autoPokeOutRange.Count; i++)
                 {
@@ -157,7 +174,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPokeOutsideData.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto Poke Outside Data Range");
+                //ShowSerialData("Auto Poke Outside Data Range");
+                await Task.Run(() => ShowSerialData("Auto Poke Outside Data Range"));
                 List<List<string>> autoPokeOutRangeData = AutoCommands.PokeOutsideDataRange();
                 for (int i = 0; i < autoPokeOutRangeData.Count; i++)
                 {
@@ -171,7 +189,8 @@ namespace NRWA_Communication_Acceptance
             if (cbFalseCRC.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Automatic False CRC");
+                //ShowSerialData("Automatic False CRC");
+                await Task.Run(() => ShowSerialData("Automatic False CRC"));
                 List<List<string>> autoFalseCRC = AutoCommands.FalseCRC();
                 for (int i = 0; i < autoFalseCRC.Count; i++)
                 {
@@ -182,7 +201,8 @@ namespace NRWA_Communication_Acceptance
             if (cbAppTellDataCast.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Application Telemetry Data Casting");
+                //ShowSerialData("Application Telemetry Data Casting");
+                await Task.Run(() => ShowSerialData("Application Telemetry Data Casting"));
                 List<List<string>> autoAppTelCom = AutoCommands.AppTelCom();
                 for (int i = 0; i < autoAppTelCom.Count; i++)
                 {
@@ -193,22 +213,36 @@ namespace NRWA_Communication_Acceptance
             if (cbAppTelData.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Application Telemetry Data Validation");
+                //ShowSerialData("Application Telemetry Data Validation");
+                await Task.Run(() => ShowSerialData("Application Telemetry Data Validation"));
                 List<List<string>> autoAppTelCom = AutoCommands.AddressSpecificCases();
                 for (int i = 0; i < autoAppTelCom.Count; i++)
                 {
-                    LogWriter.AppendLog(sSelectedPath, sFilename, "APP TEL-" + autoAppTelCom[i][4], "Application Telemetry Data Casting", autoAppTelCom[i][0], autoAppTelCom[i][1], autoAppTelCom[i][2], autoAppTelCom[i][3]);
+                    LogWriter.AppendLog(sSelectedPath, sFilename, autoAppTelCom[i][0], autoAppTelCom[i][1], autoAppTelCom[i][2], autoAppTelCom[i][3], autoAppTelCom[i][4], autoAppTelCom[i][5]);
                 }
             }
 
             if (cbPokeIncorrectData.Checked)
             {
                 iProgress += iStep;
-                ShowSerialData("Auto Poke WIth Corrupt Data");
+                //ShowSerialData("Auto Poke WIth Corrupt Data");
+                await Task.Run(() => ShowSerialData("Auto Poke WIth Corrupt Data"));
                 List<List<string>> autoPokeOutRangeData = AutoCommands.PokeWithCorruptData();
                 for (int i = 0; i < autoPokeOutRangeData.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Corrupt Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
+                }
+            }
+
+            if (cbEdgeCases.Checked)
+            {
+                iProgress += iStep;
+                //ShowSerialData("Auto Peek-Poke");
+                await Task.Run(() => ShowSerialData("Auto Edge Cases"));
+                List<List<string>> autoedge = AutoCommands.EdgeCases();
+                for (int i = 0; i < autoedge.Count; i++)
+                {
+                    LogWriter.AppendLog(sSelectedPath, sFilename, "EDGE-CASES-" + autoedge[i][4], "edge cases", autoedge[i][0], autoedge[i][1], autoedge[i][2], autoedge[i][3]);
                 }
             }
 
@@ -338,15 +372,29 @@ namespace NRWA_Communication_Acceptance
 
         }
 
-        private async Task DeserializeJson()
+        private async Task DeserializeJson(int iCase)
         {
             try
             {
-                var httpNRWAvariables = await httpClient.GetAsync(url);
-                string jsonResponse = await httpNRWAvariables.Content.ReadAsStringAsync();
-                Console.WriteLine(jsonResponse);
-                var NRWAvarObjects = JsonConvert.DeserializeObject<AutoCommands.NRWAConfigDRV110>(jsonResponse);
+                StreamReader r;
+                switch (iCase)
+                {
+                    case 0:
+                        r = new StreamReader("NRWA_DRV110_Configuration.json");
+                        break;
+                    case 1:
+                        r = new StreamReader("NRWA_T32_Configuration.json");
+                        break;
+                    case 2:
+                        r = new StreamReader("NRWA_T6_Configuration.json");
+                        break;
+                    default:
+                        r = new StreamReader("NRWA_DRV110_Configuration.json");
+                        break;
+                }
 
+                string json = r.ReadToEnd();
+                AutoCommands.NRWAvarObjects = JsonConvert.DeserializeObject<AutoCommands.Root>(json);
 
             }
             catch (Exception)
@@ -387,13 +435,27 @@ namespace NRWA_Communication_Acceptance
                 try
                 {
                     this.Cursor = Cursors.WaitCursor;
-                    ShowSerialData("Creating Command Objects");
-                    CreateCommandObjects();
-                    ShowSerialData("Deserialize NRWA variable Configuration");
-                    await Task.Run(() => DeserializeJson());
-                    ShowSerialData("Verifying");
-                    (int iTotal, int iStep) = ProgressBarSetUp();
-                    Verify(iStep);
+
+                    if (!rtbLog.Text.Contains("Creating Command Objects") )
+                    {
+                        await Task.Run(() => ShowSerialData("Creating Command Objects"));
+                        //ShowSerialData("Creating Command Objects");
+                        CreateCommandObjects();
+                    }
+
+                    if (!rtbLog.Text.Contains("Deserialize NRWA variable Configuration"))
+                    {
+                        await Task.Run(() => ShowSerialData("Deserialize NRWA variable Configuration"));
+                        //ShowSerialData("Deserialize NRWA variable Configuration");
+                        int iCase = cbNRWA.SelectedIndex;
+                        
+                        await Task.Run(() => DeserializeJson(iCase));
+                    }
+
+                    await Task.Run(() => ShowSerialData("Verifying"));
+                    //ShowSerialData("Verifying");
+                    //(int iTotal, int iStep) = ProgressBarSetUp();
+                    Verify(0);
                     this.Cursor = Cursors.Default;
                 }
                 catch (Exception ex)
@@ -796,6 +858,8 @@ namespace NRWA_Communication_Acceptance
                 cbFalseCRC.CheckState = CheckState.Checked;
                 cbAppTellDataCast.CheckState = CheckState.Checked;
                 cbPokeIncorrectData.CheckState = CheckState.Checked;
+                cbAppTelData.CheckState = CheckState.Checked;
+                cbEdgeCases.CheckState = CheckState.Checked;
             }
            
         }
@@ -882,6 +946,17 @@ namespace NRWA_Communication_Acceptance
                 return (iStep, iTotal);
             }
 
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbEdgeCases_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cbEdgeCases.Checked && cbAll.Checked)
+            { cbAll.CheckState = CheckState.Unchecked; }
         }
     }
 }
