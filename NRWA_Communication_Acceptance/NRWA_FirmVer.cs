@@ -27,8 +27,8 @@ namespace NRWA_Communication_Acceptance
 
         static HttpClient httpClient = new HttpClient();
 
-        public static string sSelectedPath;
-        public static string sFilename;
+        public static string sSelectedPath = "";
+        public static string sFilename = "";
 
         public static  List<AutoCommands> l_NRWACommands = new List<AutoCommands>();
         public static SerialPort _serialPort;
@@ -108,6 +108,8 @@ namespace NRWA_Communication_Acceptance
         private async void Verify(int iStep)
         {
             int iProgress = 0;
+            int iTotal = 0;
+            int iPass = 0;
 
             if (cbInitial.Checked)
             {
@@ -115,9 +117,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Initial Values");
                 await Task.Run(() => ShowSerialData("Initial Values"));
                 List<List<string>> autoInitPeek = AutoCommands.PeekInitialValues();
+                iTotal += autoInitPeek.Count;
                 for (int i = 0; i < autoInitPeek.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "INITIAL-" + autoInitPeek[i][4], "Initial Value Compair", autoInitPeek[i][0], autoInitPeek[i][1], autoInitPeek[i][2], autoInitPeek[i][3]);
+                    if (autoInitPeek[i][3] == "TRUE" || autoInitPeek[i][3] == "True") { iPass++; }
                 }
             }
 
@@ -128,9 +132,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Peek-Poke");
                 await Task.Run(() => ShowSerialData("Auto Peek-Poke"));
                 List<List<string>> autoPeekPoke = AutoCommands.PokePeek();
+                iTotal += autoPeekPoke.Count;
                 for (int i = 0; i < autoPeekPoke.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "PEEK-POKE-" + autoPeekPoke[i][4], "peek-poke", autoPeekPoke[i][0], autoPeekPoke[i][1], autoPeekPoke[i][2], autoPeekPoke[i][3]);
+                    if (autoPeekPoke[i][3] == "TRUE" || autoPeekPoke[i][3] == "True") { iPass++; }
                 }
             }
 
@@ -140,9 +146,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto System Telemetry Read");
                 await Task.Run(() => ShowSerialData("Auto System Telemetry Read"));
                 List<List<string>> autoSysTelRead = AutoCommands.SysTel();
+                iTotal += autoSysTelRead.Count;
                 for (int i = 0; i < autoSysTelRead.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "SYSTEM-TELEMENTRY-" + autoSysTelRead[i][4] + "-DATA-CONVERSION", "Correct", autoSysTelRead[i][0], autoSysTelRead[i][1], autoSysTelRead[i][2], autoSysTelRead[i][3]);
+                    if (autoSysTelRead[i][3] == "TRUE" || autoSysTelRead[i][3] == "True" ) { iPass++; }
                 }
             }
 
@@ -152,9 +160,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Peek Outside Address Range");
                 await Task.Run(() => ShowSerialData("Auto Peek Outside Address Range"));
                 List<List<string>> autoPeekOutRange = AutoCommands.PeekOutsideAddressRanges();
+                iTotal += autoPeekOutRange.Count;
                 for (int i = 0; i < autoPeekOutRange.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "PEEK-" + autoPeekOutRange[i][4], "Outside Address Range", autoPeekOutRange[i][0], autoPeekOutRange[i][1], autoPeekOutRange[i][2], autoPeekOutRange[i][3]);
+                    if (autoPeekOutRange[i][3] == "TRUE" || autoPeekOutRange[i][3] == "True" ) { iPass++; }
                 }
 
             }
@@ -165,9 +175,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Poke Outside Address Range");
                 await Task.Run(() => ShowSerialData("Auto Poke Outside Address Range"));
                 List<List<string>> autoPokeOutRange = AutoCommands.PokeOutsideAddressRanges();
+                iTotal += autoPokeOutRange.Count;
                 for (int i = 0; i < autoPokeOutRange.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRange[i][4], "Outside Address Range", autoPokeOutRange[i][0], autoPokeOutRange[i][1], autoPokeOutRange[i][2], autoPokeOutRange[i][3]);
+                    if (autoPokeOutRange[i][3] == "TRUE" || autoPokeOutRange[i][3] == "True" ) { iPass++; }
                 }
             }
 
@@ -177,11 +189,14 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Poke Outside Data Range");
                 await Task.Run(() => ShowSerialData("Auto Poke Outside Data Range"));
                 List<List<string>> autoPokeOutRangeData = AutoCommands.PokeOutsideDataRange();
+                iTotal += autoPokeOutRangeData.Count;
                 for (int i = 0; i < autoPokeOutRangeData.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Lack of Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
+                    if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True" ) { iPass++; }
                     i++;
                     LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Excess of Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
+                    if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True" ) { iPass++; }
                 }
 
             }
@@ -192,9 +207,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Automatic False CRC");
                 await Task.Run(() => ShowSerialData("Automatic False CRC"));
                 List<List<string>> autoFalseCRC = AutoCommands.FalseCRC();
+                iTotal += autoFalseCRC.Count;
                 for (int i = 0; i < autoFalseCRC.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, autoFalseCRC[i][4], "False CRC", autoFalseCRC[i][0], autoFalseCRC[i][1], autoFalseCRC[i][2], autoFalseCRC[i][3]);
+                    if (autoFalseCRC[i][3] == "TRUE" || autoFalseCRC[i][3] == "True" ) { iPass++; }
                 }
             }
 
@@ -204,9 +221,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Application Telemetry Data Casting");
                 await Task.Run(() => ShowSerialData("Application Telemetry Data Casting"));
                 List<List<string>> autoAppTelCom = AutoCommands.AppTelCom();
+                iTotal += autoAppTelCom.Count;
                 for (int i = 0; i < autoAppTelCom.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "APP TEL-" + autoAppTelCom[i][4], "Application Telemetry Data Casting", autoAppTelCom[i][0], autoAppTelCom[i][1], autoAppTelCom[i][2], autoAppTelCom[i][3]);
+                    if (autoAppTelCom[i][3] == "TRUE" || autoAppTelCom[i][3] == "True" ) { iPass++; }
                 }
             }
 
@@ -216,9 +235,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Application Telemetry Data Validation");
                 await Task.Run(() => ShowSerialData("Application Telemetry Data Validation"));
                 List<List<string>> autoAppTelCom = AutoCommands.AddressSpecificCases();
+                iTotal += autoAppTelCom.Count;
                 for (int i = 0; i < autoAppTelCom.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, autoAppTelCom[i][0], autoAppTelCom[i][1], autoAppTelCom[i][2], autoAppTelCom[i][3], autoAppTelCom[i][4], autoAppTelCom[i][5]);
+                    if (autoAppTelCom[i][5] == "TRUE" || autoAppTelCom[i][5] == "True") { iPass++; }
                 }
             }
 
@@ -228,9 +249,11 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Poke WIth Corrupt Data");
                 await Task.Run(() => ShowSerialData("Auto Poke WIth Corrupt Data"));
                 List<List<string>> autoPokeOutRangeData = AutoCommands.PokeWithCorruptData();
+                iTotal += autoPokeOutRangeData.Count;
                 for (int i = 0; i < autoPokeOutRangeData.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Corrupt Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
+                    if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True") { iPass++; }
                 }
             }
 
@@ -240,13 +263,15 @@ namespace NRWA_Communication_Acceptance
                 //ShowSerialData("Auto Peek-Poke");
                 await Task.Run(() => ShowSerialData("Auto Edge Cases"));
                 List<List<string>> autoedge = AutoCommands.EdgeCases();
+                iTotal += autoedge.Count;
                 for (int i = 0; i < autoedge.Count; i++)
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "EDGE-CASES-" + autoedge[i][4], "edge cases", autoedge[i][0], autoedge[i][1], autoedge[i][2], autoedge[i][3]);
+                    if (autoedge[i][3] == "TRUE" || autoedge[i][3] == "True") { iPass++; }
                 }
             }
 
-            ShowSerialData("DONE\n");
+            ShowSerialData("DONE  Pass: " + iPass.ToString() + "\\" + iTotal.ToString()  + "\n");
 
         }
 
@@ -957,6 +982,15 @@ namespace NRWA_Communication_Acceptance
         {
             if (!cbEdgeCases.Checked && cbAll.Checked)
             { cbAll.CheckState = CheckState.Unchecked; }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            string[] ports = PortCommunication.FindPorts();
+            cbPorts.Items.Clear();
+            cbPorts.Items.AddRange(ports);
+            cbPorts.SelectedIndex = 0;
+            cbNRWA.SelectedIndex = 0;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace NRWA_Communication_Acceptance
                 byte[] Data = null;
                 bool bFindSLIP = false; ;
 
-                _Port.ReadTimeout = 2000;
+                _Port.ReadTimeout = 1000;
 
                 try
                 {

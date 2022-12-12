@@ -80,9 +80,17 @@ namespace NRWA_Communication_Acceptance
 
                     _Port.Close();
 
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PEEK-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PEEK-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
                     if (Data != null)
                     {
-                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
 
                         if (bRecCRC.SequenceEqual(bChkCRC))
                         { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "PEEK-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
@@ -126,6 +134,15 @@ namespace NRWA_Communication_Acceptance
 
                     _Port.Close();
 
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
                     if (Data != null)
                     {
                         //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
@@ -133,7 +150,7 @@ namespace NRWA_Communication_Acceptance
                         if (bRecCRC.SequenceEqual(bChkCRC))
                         { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
                         else
-                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " " + BitConverter.ToString(bChkCRC), "False"); }
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "POKE-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
 
 
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
@@ -171,6 +188,15 @@ namespace NRWA_Communication_Acceptance
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
 
                     _Port.Close();
+                     
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "SYSTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "SYSTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
 
                     if (Data != null)
                     {
@@ -218,14 +244,21 @@ namespace NRWA_Communication_Acceptance
 
                     _Port.Close();
 
-                    if (Data != null)
+                    if (!bACK)
                     {
-                        //Console.WriteLine("DATA: " + BitConverter.ToString(Data));
-
                         if (bRecCRC.SequenceEqual(bChkCRC))
                         { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
                         else
                         { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
+                    if (Data != null)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPTEL-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), BitConverter.ToString(RX_Verification.removeEndingZeros(bRecCRC)) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
 
 
                         return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
@@ -263,6 +296,15 @@ namespace NRWA_Communication_Acceptance
                     (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
 
                     _Port.Close();
+
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPCOM-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "APPCOM-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected:  " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
 
                     if (Data != null)
                     {

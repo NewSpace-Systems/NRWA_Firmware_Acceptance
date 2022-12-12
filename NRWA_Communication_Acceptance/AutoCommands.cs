@@ -419,9 +419,16 @@ namespace NRWA_Communication_Acceptance
                             catch { sTXsystel = ""; throw new Exception(); }
                             try { sRXsystel = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
                             catch { sRXsystel = ""; throw new Exception(); }
-                            Value = Get32BitValueAddress(b_ValueRX[0], Data);
-                            sData = Value.ToString();
-                            bPass = true;
+                            
+                            if (bAck)
+                            {
+                                bPass = false;
+                            }
+                            else
+                            {
+                                bPass = true;
+                            }
+                            
                         } catch (Exception ex)
                         {
                             bPass = false;
@@ -536,11 +543,11 @@ namespace NRWA_Communication_Acceptance
                 catch { sData = ""; }
                 if (bAckPeek == false)
                 {
-                    bPass = true;
+                    bPass = false;
                 }
                 else
                 {
-                    bPass = false;
+                    bPass = true;
                 }
                 OutsideDataRanges[OutsideDataRanges.Count - 1].Add(sTX);
                 OutsideDataRanges[OutsideDataRanges.Count - 1].Add(sRX);
@@ -1030,6 +1037,13 @@ namespace NRWA_Communication_Acceptance
             }
 
             return edgeCase;
+        }
+
+        public static List<List<string>> NackCrc()
+        {
+            List<List<string>> crclist = new List<List<string>>();
+
+            return crclist;
         }
 
         //--------------------------------------------------------------------------------
