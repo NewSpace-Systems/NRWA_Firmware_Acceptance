@@ -874,6 +874,7 @@ namespace NRWA_Communication_Acceptance
 
             string j_field;
             int j_lenght;
+            bool signed;
             List<int> j_format;
             string j_initial;
             double Initial;
@@ -899,6 +900,7 @@ namespace NRWA_Communication_Acceptance
                             j_lenght = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].lenght;
                             j_format = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].format;
                             j_initial = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].initial;
+                            signed = NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].sign;
                             b_data = l_AppTelBlock[i].Skip(iPos).Take(j_lenght).ToArray();
                             b_value = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
 
@@ -923,11 +925,51 @@ namespace NRWA_Communication_Acceptance
                                 b_value[0] = b_data[0];
                             }
 
+                            if (j_format[0] + j_format[1] == 16)
+                            {
+                                if (signed)
+                                {
+                                    Value = intToQ((int)(short)BitConverter.ToInt16(b_data, 0), j_format[1]);
+                                }
+                                else
+                                {
+                                    Value = intToQ((int)BitConverter.ToUInt16(b_data, 0), j_format[1]);
+                                }
+
+                            }
+                            else if (j_format[0] + j_format[1] == 32)
+                            {
+                                if (signed)
+                                {
+                                    Value = intToQ((int)BitConverter.ToInt32(b_data, 0), j_format[1]);
+                                }
+                                else
+                                {
+                                    Value = intToQ((int)BitConverter.ToUInt32(b_data, 0), j_format[1]);
+                                }
+
+                            }
+                            else if (j_format[0] + j_format[1] == 8)
+                            {
+                                if (signed)
+                                {
+                                    Value = (int)b_data[0];
+                                }
+                                else
+                                {
+                                    Value = (uint)b_data[0];
+                                }
+
+                            }
+                            else
+                            {
+                                Value = -1;
+                            }
 
                             if (j_initial != "")
                             {
                                 Initial = Convert.ToDouble(j_initial.Replace('.',','));
-                                Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
+                              //  Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
 
                                 if (0.95 * Initial <= Value && 1.05 * Initial >= Value)
                                 {
@@ -951,7 +993,9 @@ namespace NRWA_Communication_Acceptance
                             }
                             else
                             {
-                                Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
+                                
+
+                               // Value = intToQ((int)BitConverter.ToUInt32(b_value, 0), j_format[1]);
                                 addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
                                 addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
                                 addSpecCase[k].Add("");
