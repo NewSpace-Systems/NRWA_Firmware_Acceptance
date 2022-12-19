@@ -201,6 +201,7 @@ namespace NRWA_Communication_Acceptance
         {
             public string field { get; set; }
             public int lenght { get; set; }
+            public bool sign { get; set; }
             public List<int> format { get; set; }
             public string initial { get; set; }
         }
@@ -216,6 +217,7 @@ namespace NRWA_Communication_Acceptance
             public string name { get; set; }
             public string address { get; set; }
             public List<int> format { get; set; }
+            public bool sign { get; set; }
             public string initial { get; set; }
         }
 

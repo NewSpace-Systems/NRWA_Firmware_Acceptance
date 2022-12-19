@@ -6,288 +6,336 @@
           "name": "FM Version Major",
           "address": "01",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000000"
         },
         {
           "name": "FM Version Minor",
           "address": "02",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000000"
         },
         {
           "name": "FM Version Patch",
           "address": "03",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000000"
         },
         {
           "name": "Overpower CL",
           "address": "04",
           "format": [ 32, 0 ],
+          "sign": true,
           "initial": "00009C40"
         },
         {
           "name": "Overcurrent CL",
           "address": "05",
           "format": [ 20, 12 ],
+          "sign": true,
           "initial": "00005dc0"
         },
         {
           "name": "Overspeed CL",
           "address": "06",
           "format": [ 20, 12 ],
+          "sign": true,
           "initial": "5dc00000"
         },
         {
           "name": "Overvoltage Protection",
           "address": "07",
           "format": [ 16, 16 ],
+          "sign": true,
           "initial": "00220000"
         },
         {
           "name": "Pase A Current ADC Offset",
           "address": "08",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "01de0000"
         },
         {
           "name": "Pase A Current ADC Gain",
           "address": "09",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000779"
         },
         {
           "name": "Pase B Current ADC Offset",
           "address": "0A",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "01de0000"
         },
         {
           "name": "Pase B Current ADC Gain",
           "address": "0B",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000779"
         },
         {
           "name": "Pase C Current ADC Offset",
           "address": "0C",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "01de0000"
         },
         {
           "name": "Pase C Current ADC Gain",
           "address": "0D",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000779"
         },
         {
           "name": "Kp Phase Current",
           "address": "0E",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000f54"
         },
         {
           "name": "Ki Phase Current",
           "address": "0F",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000067"
         },
         {
           "name": "Phase Current Intergral Limit",
           "address": "10",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "030fffff"
         },
         {
           "name": "Kp Speed",
           "address": "11",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "030fffff"
         },
         {
           "name": "Ki Speed",
           "address": "12",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000001"
         },
         {
           "name": "<10rpm Speed Current Intergral Limit",
           "address": "13",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "005dc000"
         },
         {
           "name": "<100rpm Speed Current Intergral Limit",
           "address": "14",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00032000"
         },
         {
           "name": "<1000rpm Speed Current Intergral Limit",
           "address": "15",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00064000"
         },
         {
           "name": ">1000rpm Speed Current Intergral Limit",
           "address": "16",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "000fa000"
         },
         {
           "name": "Speed Current Limit",
           "address": "17",
           "format": [ 22, 10 ],
+          "sign": false,
           "initial": "001f4000"
         },
         {
           "name": "Torque Conversion Factor",
           "address": "18",
           "format": [ 16, 16 ],
+          "sign": false,
           "initial": "000001a4"
         },
         {
           "name": "Kt Torque Motor Factor",
           "address": "19",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000012c"
         },
         {
           "name": "Torque Brekaway Friction Disturbance",
           "address": "1A",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000280"
         },
         {
           "name": "Kp Torque",
           "address": "1B",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000400"
         },
         {
           "name": "Ki Torque",
           "address": "1C",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000001"
         },
         {
           "name": "<10rpm Speed Torque Intergral Limit",
           "address": "1D",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000400"
         },
         {
           "name": "<100rpm Torque Current Intergral Limit",
           "address": "1E",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000400"
         },
         {
           "name": ">100rpm Torque Current Intergral Limit",
           "address": "1F",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000400"
         },
         {
           "name": "Kp Active Breaking Dynamic Load",
           "address": "20",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000008"
         },
         {
           "name": "Active Breaking Dynamic Load Cycle Limit",
           "address": "21",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000ffff"
         },
         {
           "name": "Breaking Dynamic Load Setpoint",
           "address": "22",
           "format": [ 16, 16 ],
+          "sign": true,
           "initial": "001f0000"
         },
         {
           "name": "Monitor ADC Generic Gain",
           "address": "23",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000001"
         },
         {
           "name": "Monitor ADC 24V Gain",
           "address": "24",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "000000298"
         },
         {
           "name": "Monitor ADC 5V Current Gain",
           "address": "25",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000006fe"
         },
         {
           "name": "Monitor ADC 3V3 Current Gain",
           "address": "26",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "000000a03"
         },
         {
           "name": "Monitor ADC 1V5 Current Gain",
           "address": "27",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000006fe"
         },
         {
           "name": "Monitor ADC 24V Current Gain",
           "address": "28",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000001cc"
         },
         {
           "name": "Monitor Opamp Current Gain",
           "address": "29",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "000000a50"
         },
         {
           "name": "Monitor 5V Voltage Gain",
           "address": "2A",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000009c"
         },
         {
           "name": "Monitor 12V Current Gain",
           "address": "2B",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "0000014a0"
         },
         {
           "name": "Monitor 1V5 Voltage Gain",
           "address": "2C",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000035"
         },
         {
           "name": "Monitor 3V3 Voltage Gain",
           "address": "2D",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000050"
         },
         {
           "name": "Monitor 12V Voltage Gain",
           "address": "2E",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000245"
         },
         {
           "name": "Monitor ADC Generic Offset",
           "address": "2F",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "00000000"
         },
         {
           "name": "Monitor 24V Current Offset",
           "address": "30",
           "format": [ 32, 0 ],
+          "sign": false,
           "initial": "fff51a42"
         }
       ]
@@ -303,72 +351,84 @@
               "field": "Status Register",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Control Mode Register",
               "lenght": 1,
               "format": [ 8, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Control Setpoint",
               "lenght": 2,
               "format": [ 16, 0 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "PWM Duty Cycle",
               "lenght": 2,
               "format": [ 16, 0 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Current Control Target",
               "lenght": 2,
               "format": [ 14, 2 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Current Measurement",
               "lenght": 4,
               "format": [ 20, 12 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Speed Measurement",
               "lenght": 4,
               "format": [ 28, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Drive Power",
               "lenght": 4,
               "format": [ 20, 12 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "DC-DC Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "FPGA Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Motor driver Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             }
 
@@ -383,96 +443,112 @@
               "field": "Status Register",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "DC-DC Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "FPGA Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Driver Temperature",
               "lenght": 2,
               "format": [ 12, 4 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Monitor 1V5 Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": "1.5"
             },
             {
               "field": "Monitor 3V3 Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": "3.3"
             },
             {
               "field": "Monitor 5V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": "5"
             },
             {
               "field": "Monitor 12V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": "12"
             },
             {
               "field": "Monitor 24V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": "24"
             },
             {
               "field": "Monitor 1V5 Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Monitor 3V3 Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Monitor 5V Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Monitor 12V Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Monitor 24V Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Monitor 24V Sensing Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
+              "sign": false,
               "initial": ""
             }
           ]
@@ -486,150 +562,175 @@
               "field": "Status Register",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Uptime Count",
               "lenght": 4,
               "format": [ 30, 2 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "EDAC Correctable SEU Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "EDAC Error SEU Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "EDAC Write Usage",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "EDAC Read Usage",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "EDAC Scrub Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD Bytes Received Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD Bytes Received Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "TXD Bytes Transmitted Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-TXD Bytes Transmitted Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD UART Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD UART Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD NSP ACK Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD NSP ACK Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD SLIP Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD SLIP Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD NSP CRC Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD NSP CRC Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "RXD NSP Discarded Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "R-RXD NSP Discarded Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Revolution Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Hall Skip Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Drive Fault Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             },
             {
               "field": "Drive Overtemperature Count",
               "lenght": 4,
               "format": [ 32, 0 ],
+              "sign": false,
               "initial": ""
             }
           ]
