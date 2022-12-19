@@ -11,6 +11,7 @@ namespace NRWA_Communication_Acceptance
     internal class NRWA_Cmnds
     {
         public const byte bPING = 0x80;
+        public const byte bINIT = 0x81;
         public const byte bPEEK = 0x82;
         public const byte bPOKE = 0x83;
         public const byte bSYS_TELEMETRY = 0x84;
@@ -59,6 +60,114 @@ namespace NRWA_Communication_Acceptance
             catch (Exception ex)
             {
                 return (false, false, ex.Message, null, null, null, null, null);
+            }
+
+        }
+
+        public static (bool, bool, string, byte[], byte[], byte[], byte[]) cmnd_Init(SerialPort _Port, byte ssAddress, byte ssSource)
+        {
+            _Port.DtrEnable = true;
+            _Port.Open();
+            _Port.ReadTimeout = 250;
+            //Console.WriteLine("PEEK");
+
+            try
+            {
+                (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bINIT, null);
+                System.Threading.Thread.Sleep(100);
+                if (bSuccess == true)
+                {
+                    (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
+
+                    _Port.Close();
+
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "INIT-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "INIT-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
+                    if (Data != null)
+                    {
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "INIT-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "INIT-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
+                    }
+                    else
+                    {
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, null, null);
+                    }
+                }
+                else
+                {
+                    return (bSuccess, false, sWFeedback, a_TX, null, null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, false, ex.Message, null, null, null, null);
+            }
+
+        }
+
+        public static (bool, bool, string, byte[], byte[], byte[], byte[]) cmnd_Res(SerialPort _Port, byte ssAddress, byte ssSource, byte bCommandCode)
+        {
+            _Port.DtrEnable = true;
+            _Port.Open();
+            _Port.ReadTimeout = 250;
+            //Console.WriteLine("PEEK");
+
+            try
+            {
+                (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bCommandCode, null);
+                System.Threading.Thread.Sleep(100);
+                if (bSuccess == true)
+                {
+                    (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
+
+                    _Port.Close();
+
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "RESERVED-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "RESERVED-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
+                    if (Data != null)
+                    {
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "RESERVED-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "RESERVED-CRC", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
+                    }
+                    else
+                    {
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, null, null);
+                    }
+                }
+                else
+                {
+                    return (bSuccess, false, sWFeedback, a_TX, null, null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, false, ex.Message, null, null, null, null);
             }
 
         }
@@ -405,9 +514,66 @@ namespace NRWA_Communication_Acceptance
             }
             catch (Exception ex)
             {
+                _Port.Close();
                 return (false, false, ex.Message, null, null, null, null, null);
             }
 
         }
+
+        public static (bool, bool, string, byte[], byte[], byte[], byte[]) cmnd_CCC(SerialPort _Port, byte ssAddress, byte ssSource, byte bCommandCode)
+        {
+            _Port.DtrEnable = true;
+            _Port.Open();
+            _Port.ReadTimeout = 250;
+            //Console.WriteLine("PEEK");
+
+            try
+            {
+                (bool bSuccess, string sWFeedback, byte[] a_TX) = PortCommunication.PortWrite(_Port, ssAddress, ssSource, bCommandCode, null);
+                System.Threading.Thread.Sleep(100);
+                if (bSuccess == true)
+                {
+                    (bool bFindSLIP, bool bACK, byte[] a_RX, string sRFeedback, byte bSrcAddr, byte bDstAddr, byte bCmnd, byte[] Data, byte[] bRecCRC, byte[] bChkCRC) = PortCommunication.PortRead(_Port);
+
+                    _Port.Close();
+
+                    if (!bACK)
+                    {
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "CMND CODE CASE", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "CMND CODE CASE", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+                    }
+
+                    if (Data != null)
+                    {
+
+                        if (bRecCRC.SequenceEqual(bChkCRC))
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "CMND CODE CASE", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "True"); }
+                        else
+                        { LogWriter.AppendLog(NRWA_FirmVer.sSelectedPath, NRWA_FirmVer.sFilename, "CMND CODE CASE", "Received vs Expected", BitConverter.ToString(a_TX), BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)), "Received: " + BitConverter.ToString(bRecCRC) + " Expected: " + BitConverter.ToString(bChkCRC), "False"); }
+
+
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, Data, bRecCRC);
+                    }
+                    else
+                    {
+                        return (bFindSLIP, bACK, sRFeedback, a_TX, a_RX, null, null);
+                    }
+                }
+                else
+                {
+                    return (bSuccess, false, sWFeedback, a_TX, null, null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                _Port.Close();
+                return (false, false, ex.Message, null, null, null, null);
+            }
+
+        }
+
     }
 }

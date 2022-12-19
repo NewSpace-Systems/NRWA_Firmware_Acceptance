@@ -66,6 +66,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.cbNACK = new System.Windows.Forms.CheckBox();
+            this.cbCCC = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -85,6 +87,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cbCCC);
+            this.tabPage1.Controls.Add(this.cbNACK);
             this.tabPage1.Controls.Add(this.cbEdgeCases);
             this.tabPage1.Controls.Add(this.progressBar);
             this.tabPage1.Controls.Add(this.cbAppTelData);
@@ -114,9 +118,9 @@
             this.cbEdgeCases.AutoSize = true;
             this.cbEdgeCases.Location = new System.Drawing.Point(25, 381);
             this.cbEdgeCases.Name = "cbEdgeCases";
-            this.cbEdgeCases.Size = new System.Drawing.Size(104, 20);
+            this.cbEdgeCases.Size = new System.Drawing.Size(134, 20);
             this.cbEdgeCases.TabIndex = 14;
-            this.cbEdgeCases.Text = "Edge Cases";
+            this.cbEdgeCases.Text = "Auto Edge Cases";
             this.cbEdgeCases.UseVisualStyleBackColor = true;
             this.cbEdgeCases.CheckedChanged += new System.EventHandler(this.cbEdgeCases_CheckedChanged);
             // 
@@ -470,11 +474,33 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // cbNACK
+            // 
+            this.cbNACK.AutoSize = true;
+            this.cbNACK.Location = new System.Drawing.Point(24, 408);
+            this.cbNACK.Name = "cbNACK";
+            this.cbNACK.Size = new System.Drawing.Size(126, 20);
+            this.cbNACK.TabIndex = 15;
+            this.cbNACK.Text = "Auto NACK CRC";
+            this.cbNACK.UseVisualStyleBackColor = true;
+            this.cbNACK.CheckedChanged += new System.EventHandler(this.cbNACK_CheckedChanged);
+            // 
+            // cbCCC
+            // 
+            this.cbCCC.AutoSize = true;
+            this.cbCCC.Location = new System.Drawing.Point(23, 437);
+            this.cbCCC.Name = "cbCCC";
+            this.cbCCC.Size = new System.Drawing.Size(249, 25);
+            this.cbCCC.TabIndex = 16;
+            this.cbCCC.Text = "Auto Command Code Cases";
+            this.cbCCC.UseVisualStyleBackColor = true;
+            this.cbCCC.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // NRWA_FirmVer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1388, 664);
+            this.ClientSize = new System.Drawing.Size(1739, 816);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -539,6 +565,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbEdgeCases;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.CheckBox cbNACK;
+        private System.Windows.Forms.CheckBox cbCCC;
     }
 }
 

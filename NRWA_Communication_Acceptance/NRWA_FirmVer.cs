@@ -94,7 +94,7 @@ namespace NRWA_Communication_Acceptance
                     sSelectedPath = fbd.SelectedPath;
                     bLogging = true;
 
-                    sFilename = "_NRWA_Log_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss");
+                    sFilename = "_NRWA_Log_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + ".txt";
                     lblLog.Text = sFilename;
                     LogWriter.Create(sSelectedPath, sFilename);
                 }
@@ -243,19 +243,19 @@ namespace NRWA_Communication_Acceptance
                 }
             }
 
-            if (cbPokeIncorrectData.Checked)
-            {
-                iProgress += iStep;
-                //ShowSerialData("Auto Poke WIth Corrupt Data");
-                await Task.Run(() => ShowSerialData("Auto Poke WIth Corrupt Data"));
-                List<List<string>> autoPokeOutRangeData = AutoCommands.PokeWithCorruptData();
-                iTotal += autoPokeOutRangeData.Count;
-                for (int i = 0; i < autoPokeOutRangeData.Count; i++)
-                {
-                    LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Corrupt Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
-                    if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True") { iPass++; }
-                }
-            }
+            //if (cbPokeIncorrectData.Checked)
+            //{
+            //    iProgress += iStep;
+            //    //ShowSerialData("Auto Poke WIth Corrupt Data");
+            //    await Task.Run(() => ShowSerialData("Auto Poke WIth Corrupt Data"));
+            //    List<List<string>> autoPokeOutRangeData = AutoCommands.PokeWithCorruptData();
+            //    iTotal += autoPokeOutRangeData.Count;
+            //    for (int i = 0; i < autoPokeOutRangeData.Count; i++)
+            //    {
+            //        LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Corrupt Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
+            //        if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True") { iPass++; }
+            //    }
+            //}
 
             if (cbEdgeCases.Checked)
             {
@@ -268,6 +268,34 @@ namespace NRWA_Communication_Acceptance
                 {
                     LogWriter.AppendLog(sSelectedPath, sFilename, "EDGE-CASES-" + autoedge[i][4], "edge cases", autoedge[i][0], autoedge[i][1], autoedge[i][2], autoedge[i][3]);
                     if (autoedge[i][3] == "TRUE" || autoedge[i][3] == "True") { iPass++; }
+                }
+            }
+
+            if (cbNACK.Checked)
+            {
+                iProgress += iStep;
+                //ShowSerialData("Auto Peek-Poke");
+                await Task.Run(() => ShowSerialData("Auto NACK CRC"));
+                List<List<string>> autoNackCrc = AutoCommands.NackCrc();
+                iTotal += autoNackCrc.Count;
+                for (int i = 0; i < autoNackCrc.Count; i++)
+                {
+                    LogWriter.AppendLog(sSelectedPath, sFilename, "NackCrc-CASES-" + autoNackCrc[i][4], "NackCrc cases", autoNackCrc[i][0], autoNackCrc[i][1], autoNackCrc[i][2], autoNackCrc[i][3]);
+                    if (autoNackCrc[i][3] == "TRUE" || autoNackCrc[i][3] == "True") { iPass++; }
+                }
+            }
+
+            if (cbCCC.Checked)
+            {
+                iProgress += iStep;
+                //ShowSerialData("Auto Peek-Poke");
+                await Task.Run(() => ShowSerialData("Auto Command Code Cases"));
+                List<List<string>> autoCCC = AutoCommands.CommandCodeCases();
+                iTotal += autoCCC.Count;
+                for (int i = 0; i < autoCCC.Count; i++)
+                {
+                    LogWriter.AppendLog(sSelectedPath, sFilename, "CMND CODE CASE-" + autoCCC[i][4], "Command Code Cases", autoCCC[i][0], autoCCC[i][1], autoCCC[i][2], autoCCC[i][3]);
+                    if (autoCCC[i][3] == "TRUE" || autoCCC[i][3] == "True") { iPass++; }
                 }
             }
 
@@ -422,10 +450,10 @@ namespace NRWA_Communication_Acceptance
                 AutoCommands.NRWAvarObjects = JsonConvert.DeserializeObject<AutoCommands.Root>(json);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw new Exception("Faled to load Configuration File");
             }
         }
 
@@ -885,6 +913,8 @@ namespace NRWA_Communication_Acceptance
                 cbPokeIncorrectData.CheckState = CheckState.Checked;
                 cbAppTelData.CheckState = CheckState.Checked;
                 cbEdgeCases.CheckState = CheckState.Checked;
+                cbNACK.CheckState = CheckState.Checked;
+                cbCCC.CheckState = CheckState.Checked;
             }
            
         }
@@ -991,6 +1021,18 @@ namespace NRWA_Communication_Acceptance
             cbPorts.Items.AddRange(ports);
             cbPorts.SelectedIndex = 0;
             cbNRWA.SelectedIndex = 0;
+        }
+
+        private void cbNACK_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cbNACK.Checked && cbAll.Checked)
+            { cbAll.CheckState = CheckState.Unchecked; }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cbNACK.Checked && cbAll.Checked)
+            { cbCCC.CheckState = CheckState.Unchecked; }
         }
     }
 }

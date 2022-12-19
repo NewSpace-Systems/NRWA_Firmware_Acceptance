@@ -1043,7 +1043,230 @@ namespace NRWA_Communication_Acceptance
         {
             List<List<string>> crclist = new List<List<string>>();
 
+            double Value;
+            byte[] bValue = new byte[4];
+            bool bPass = false;
+            string sTXcrc, sRXcrc, sCommand, sData;
+            try
+            {
+                //INIT
+                crclist.Add(new List<string>());
+                sTXcrc = "";
+                sRXcrc = "";
+                sData = "";
+                bPass = false;
+                sCommand = "";
+
+                try
+                {
+                    (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_Init(NRWA_FirmVer._serialPort, 0x07, 0x11);
+                    try { sTXcrc = BitConverter.ToString(a_TX); }
+                    catch { sTXcrc = ""; throw new Exception(); }
+                    try { sRXcrc = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
+                    catch { sRXcrc = ""; throw new Exception(); }
+
+                    if (bAck)
+                    {
+                        bPass = true;
+                    }
+                    else
+                    {
+                        bPass = false;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    bPass = false;
+                }
+                crclist[crclist.Count - 1].Add(sTXcrc);
+                crclist[crclist.Count - 1].Add(sRXcrc);
+                crclist[crclist.Count - 1].Add(sData.Replace(',', '.'));
+                crclist[crclist.Count - 1].Add(bPass.ToString());
+                crclist[crclist.Count - 1].Add("0x01");
+
+                //05 Reserved
+                crclist.Add(new List<string>());
+                sTXcrc = "";
+                sRXcrc = "";
+                sData = "";
+                bPass = false;
+                sCommand = "";
+
+                try
+                {
+                    (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_Res(NRWA_FirmVer._serialPort, 0x07, 0x11, 0x85);
+                    try { sTXcrc = BitConverter.ToString(a_TX); }
+                    catch { sTXcrc = ""; throw new Exception(); }
+                    try { sRXcrc = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
+                    catch { sRXcrc = ""; throw new Exception(); }
+
+                    if (bAck)
+                    {
+                        bPass = true;
+                    }
+                    else
+                    {
+                        bPass = false;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    bPass = false;
+                }
+                crclist[crclist.Count - 1].Add(sTXcrc);
+                crclist[crclist.Count - 1].Add(sRXcrc);
+                crclist[crclist.Count - 1].Add(sData.Replace(',', '.'));
+                crclist[crclist.Count - 1].Add(bPass.ToString());
+                crclist[crclist.Count - 1].Add("0x05");
+
+
+                //06 Reserved
+                crclist.Add(new List<string>());
+                sTXcrc = "";
+                sRXcrc = "";
+                sData = "";
+                bPass = false;
+                sCommand = "";
+
+                try
+                {
+                    (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_Res(NRWA_FirmVer._serialPort, 0x07, 0x11, 0x86);
+                    try { sTXcrc = BitConverter.ToString(a_TX); }
+                    catch { sTXcrc = ""; throw new Exception(); }
+                    try { sRXcrc = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
+                    catch { sRXcrc = ""; throw new Exception(); }
+
+                    if (bAck)
+                    {
+                        bPass = true;
+                    }
+                    else
+                    {
+                        bPass = false;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    bPass = false;
+                }
+                crclist[crclist.Count - 1].Add(sTXcrc);
+                crclist[crclist.Count - 1].Add(sRXcrc);
+                crclist[crclist.Count - 1].Add(sData.Replace(',', '.'));
+                crclist[crclist.Count - 1].Add(bPass.ToString());
+                crclist[crclist.Count - 1].Add("0x06");
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            try
+            {
+                for (int i = 0; i < NRWA_FirmVer.l_NRWACommands.Count; i++)
+                {
+                    if (NRWA_FirmVer.l_NRWACommands[i].bCommand == 0x84)
+                    {
+                        crclist.Add(new List<string>());
+                        sTXcrc = "";
+                        sRXcrc = "";
+                        sData = "";
+                        bPass = false;
+                        sCommand = "";
+
+                        try
+                        {
+                            byte[] b_ValueRX = new byte[1];
+                            b_ValueRX[0] = NRWA_FirmVer.l_NRWACommands[i].bAddress;
+                            sCommand = NRWA_FirmVer.l_NRWACommands[i].bAddress.ToString("X2");
+                            (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_SysTel(NRWA_FirmVer._serialPort, 0x07, 0x11, b_ValueRX);
+                            try { sTXcrc = BitConverter.ToString(a_TX); }
+                            catch { sTXcrc = ""; throw new Exception(); }
+                            try { sRXcrc = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RX)); }
+                            catch { sRXcrc = ""; throw new Exception(); }
+
+                            if (bAck)
+                            {
+                                bPass = true;
+                            }
+                            else
+                            {
+                                bPass = false;
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            bPass = false;
+                        }
+                        crclist[crclist.Count - 1].Add(sTXcrc);
+                        crclist[crclist.Count - 1].Add(sRXcrc);
+                        crclist[crclist.Count - 1].Add(sData.Replace(',', '.'));
+                        crclist[crclist.Count - 1].Add(bPass.ToString());
+                        crclist[crclist.Count - 1].Add(sCommand);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
             return crclist;
+        }
+
+        public static List<List<string>> CommandCodeCases()
+        {
+            List<List<string>> ccc = new List<List<string>>();
+            byte[] rDataccc = null;
+            bool bPass = false;
+            string sTXccc, sRXccc, sCommand, sData;
+
+            for (int i = 0; i < 256; i++)
+            {
+                
+                ccc.Add(new List<string>());
+                sTXccc = "";
+                sRXccc = "";
+                sData = "";
+                bPass = false;
+                sCommand = i.ToString("X2");
+                try
+                {
+                    (bool bFoundccc, bool bAckccc, string sRFeedbackccc, byte[] a_TXccc, byte[] a_RXccc, byte[] Dataccc, byte[] bRecCRCccc) = NRWA_Cmnds.cmnd_CCC(NRWA_FirmVer._serialPort, 0x07, 0x11, (byte)i);
+                    try { sTXccc = BitConverter.ToString(a_TXccc); }
+                    catch { sTXccc = ""; throw new Exception(); };
+                    try { sRXccc = BitConverter.ToString(RX_Verification.removeEndingZeros(a_RXccc)); }
+                    catch { sRXccc = ""; throw new Exception(); }
+
+                    if (bAckccc)
+                    {
+                        bPass = true;
+                    }
+                    else
+                    {
+                        bPass = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    bPass = false;
+                }
+
+                ccc[ccc.Count - 1].Add(sTXccc);
+                ccc[ccc.Count - 1].Add(sRXccc);
+                ccc[ccc.Count - 1].Add("");
+                ccc[ccc.Count - 1].Add(bPass.ToString());
+                ccc[ccc.Count - 1].Add(sCommand);
+                
+            }
+
+            return ccc;
         }
 
         //--------------------------------------------------------------------------------

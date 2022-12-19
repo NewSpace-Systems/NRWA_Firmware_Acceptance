@@ -165,7 +165,7 @@ namespace NRWA_Communication_Acceptance
                 bCRCrec[1] = a_DeframedMessage[a_DeframedMessage.Length - 1];
                 bCRCrec[0] = a_DeframedMessage[a_DeframedMessage.Length - 2];
 
-                return  (true, bSrcAddr, bDestAddr, bCmnd, a_Data, bCRCexp, bCRCrec); ;
+                return  (true, bSrcAddr, bDestAddr, bCmnd, a_Data, bCRCrec, bCRCexp); ;
             }
         }
 
