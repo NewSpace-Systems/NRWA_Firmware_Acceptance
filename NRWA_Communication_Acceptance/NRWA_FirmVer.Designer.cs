@@ -31,6 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NRWA_FirmVer));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbCounters = new System.Windows.Forms.CheckBox();
+            this.cbCCC = new System.Windows.Forms.CheckBox();
+            this.cbNACK = new System.Windows.Forms.CheckBox();
             this.cbEdgeCases = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.cbAppTelData = new System.Windows.Forms.CheckBox();
@@ -66,8 +69,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.cbNACK = new System.Windows.Forms.CheckBox();
-            this.cbCCC = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -87,6 +88,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cbCounters);
             this.tabPage1.Controls.Add(this.cbCCC);
             this.tabPage1.Controls.Add(this.cbNACK);
             this.tabPage1.Controls.Add(this.cbEdgeCases);
@@ -112,6 +114,40 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Automatic";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cbCounters
+            // 
+            this.cbCounters.AutoSize = true;
+            this.cbCounters.Location = new System.Drawing.Point(24, 437);
+            this.cbCounters.Name = "cbCounters";
+            this.cbCounters.Size = new System.Drawing.Size(176, 20);
+            this.cbCounters.TabIndex = 17;
+            this.cbCounters.Text = "Auto Telemetry Counters";
+            this.cbCounters.UseVisualStyleBackColor = true;
+            this.cbCounters.CheckedChanged += new System.EventHandler(this.cbCounters_CheckedChanged);
+            // 
+            // cbCCC
+            // 
+            this.cbCCC.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cbCCC.AutoSize = true;
+            this.cbCCC.Location = new System.Drawing.Point(23, 463);
+            this.cbCCC.Name = "cbCCC";
+            this.cbCCC.Size = new System.Drawing.Size(199, 20);
+            this.cbCCC.TabIndex = 16;
+            this.cbCCC.Text = "Auto Command Code Cases";
+            this.cbCCC.UseVisualStyleBackColor = true;
+            this.cbCCC.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // cbNACK
+            // 
+            this.cbNACK.AutoSize = true;
+            this.cbNACK.Location = new System.Drawing.Point(24, 408);
+            this.cbNACK.Name = "cbNACK";
+            this.cbNACK.Size = new System.Drawing.Size(126, 20);
+            this.cbNACK.TabIndex = 15;
+            this.cbNACK.Text = "Auto NACK CRC";
+            this.cbNACK.UseVisualStyleBackColor = true;
+            this.cbNACK.CheckedChanged += new System.EventHandler(this.cbNACK_CheckedChanged);
             // 
             // cbEdgeCases
             // 
@@ -420,7 +456,8 @@
             this.btnLog.Name = "btnLog";
             this.btnLog.Size = new System.Drawing.Size(148, 33);
             this.btnLog.TabIndex = 4;
-            this.btnLog.Text = "Log";
+            this.btnLog.Text = "Create New Log";
+            this.btnLog.UseMnemonic = false;
             this.btnLog.UseVisualStyleBackColor = true;
             this.btnLog.Click += new System.EventHandler(this.btnLog_Click);
             // 
@@ -474,32 +511,11 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // cbNACK
-            // 
-            this.cbNACK.AutoSize = true;
-            this.cbNACK.Location = new System.Drawing.Point(24, 408);
-            this.cbNACK.Name = "cbNACK";
-            this.cbNACK.Size = new System.Drawing.Size(126, 20);
-            this.cbNACK.TabIndex = 15;
-            this.cbNACK.Text = "Auto NACK CRC";
-            this.cbNACK.UseVisualStyleBackColor = true;
-            this.cbNACK.CheckedChanged += new System.EventHandler(this.cbNACK_CheckedChanged);
-            // 
-            // cbCCC
-            // 
-            this.cbCCC.AutoSize = true;
-            this.cbCCC.Location = new System.Drawing.Point(23, 437);
-            this.cbCCC.Name = "cbCCC";
-            this.cbCCC.Size = new System.Drawing.Size(249, 25);
-            this.cbCCC.TabIndex = 16;
-            this.cbCCC.Text = "Auto Command Code Cases";
-            this.cbCCC.UseVisualStyleBackColor = true;
-            this.cbCCC.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
             // NRWA_FirmVer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1739, 816);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.label2);
@@ -510,9 +526,11 @@
             this.Controls.Add(this.btnPortCon);
             this.Controls.Add(this.cbPorts);
             this.Controls.Add(this.tabControl1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "NRWA_FirmVer";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "NRWA Firmware Verification Script";
             this.Load += new System.EventHandler(this.NRWA_FirmVer_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -567,6 +585,7 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.CheckBox cbNACK;
         private System.Windows.Forms.CheckBox cbCCC;
+        private System.Windows.Forms.CheckBox cbCounters;
     }
 }
 

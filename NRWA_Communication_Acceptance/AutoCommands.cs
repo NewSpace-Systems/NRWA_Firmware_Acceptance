@@ -1319,6 +1319,24 @@ namespace NRWA_Communication_Acceptance
             return ccc;
         }
 
+        public static List<List<string>> DRV110Counters()
+        {
+            List<List<string>> counters = new List<List<string>>();
+            byte[] rData = null;
+            bool bPass = false;
+            string sTX, sRX, sCommand, sData;
+
+
+
+            counters[counters.Count - 1].Add(sTX);
+            counters[counters.Count - 1].Add(sRX);
+            counters[counters.Count - 1].Add("");
+            counters[counters.Count - 1].Add(bPass.ToString());
+            counters[counters.Count - 1].Add("Uptime Counter");
+
+            return counters;
+        }
+
         //--------------------------------------------------------------------------------
         public static double Get32BitValueAddress(byte address, byte[] data)
         {

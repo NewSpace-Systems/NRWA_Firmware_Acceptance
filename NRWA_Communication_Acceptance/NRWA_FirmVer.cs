@@ -25,7 +25,6 @@ namespace NRWA_Communication_Acceptance
         bool bLogging = false;
         static string path = "";
 
-        static HttpClient httpClient = new HttpClient();
 
         public static string sSelectedPath = "";
         public static string sFilename = "";
@@ -33,7 +32,8 @@ namespace NRWA_Communication_Acceptance
         public static  List<AutoCommands> l_NRWACommands = new List<AutoCommands>();
         public static SerialPort _serialPort;
 
-        BackgroundWorker bgWorker;
+        static int iProgStep;
+        static int iProgTot;
         
 
         public NRWA_FirmVer()
@@ -86,18 +86,17 @@ namespace NRWA_Communication_Acceptance
         {
             if (!bLogging)
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
-                fbd.Description = "Custom Description";
+                
+                sSelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\FVS_NRWA_Logs\\";
+                bLogging = true;
 
-                if (fbd.ShowDialog() == DialogResult.OK)
-                {
-                    sSelectedPath = fbd.SelectedPath;
-                    bLogging = true;
+                if (!Directory.Exists(sSelectedPath))
+                    Directory.CreateDirectory(sSelectedPath);
 
-                    sFilename = "_NRWA_Log_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + ".txt";
-                    lblLog.Text = sFilename;
-                    LogWriter.Create(sSelectedPath, sFilename);
-                }
+                sFilename = "_NRWA_Log_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + ".txt";
+                lblLog.Text = sFilename;
+                LogWriter.Create(sSelectedPath, sFilename);
+
             }
             else
             {
@@ -114,8 +113,8 @@ namespace NRWA_Communication_Acceptance
             if (cbInitial.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Initial Values");
                 await Task.Run(() => ShowSerialData("Initial Values"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoInitPeek = AutoCommands.PeekInitialValues();
                 iTotal += autoInitPeek.Count;
                 for (int i = 0; i < autoInitPeek.Count; i++)
@@ -129,8 +128,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPeekPoke.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Peek-Poke");
                 await Task.Run(() => ShowSerialData("Auto Peek-Poke"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoPeekPoke = AutoCommands.PokePeek();
                 iTotal += autoPeekPoke.Count;
                 for (int i = 0; i < autoPeekPoke.Count; i++)
@@ -143,8 +142,8 @@ namespace NRWA_Communication_Acceptance
             if (cbSystemTelemetryDataCast.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto System Telemetry Read");
                 await Task.Run(() => ShowSerialData("Auto System Telemetry Read"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoSysTelRead = AutoCommands.SysTel();
                 iTotal += autoSysTelRead.Count;
                 for (int i = 0; i < autoSysTelRead.Count; i++)
@@ -157,8 +156,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPeekOutsideAd.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Peek Outside Address Range");
                 await Task.Run(() => ShowSerialData("Auto Peek Outside Address Range"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoPeekOutRange = AutoCommands.PeekOutsideAddressRanges();
                 iTotal += autoPeekOutRange.Count;
                 for (int i = 0; i < autoPeekOutRange.Count; i++)
@@ -172,8 +171,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPokeOutsideAd.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Poke Outside Address Range");
                 await Task.Run(() => ShowSerialData("Auto Poke Outside Address Range"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoPokeOutRange = AutoCommands.PokeOutsideAddressRanges();
                 iTotal += autoPokeOutRange.Count;
                 for (int i = 0; i < autoPokeOutRange.Count; i++)
@@ -186,8 +185,8 @@ namespace NRWA_Communication_Acceptance
             if (cbPokeOutsideData.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Poke Outside Data Range");
                 await Task.Run(() => ShowSerialData("Auto Poke Outside Data Range"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoPokeOutRangeData = AutoCommands.PokeOutsideDataRange();
                 iTotal += autoPokeOutRangeData.Count;
                 for (int i = 0; i < autoPokeOutRangeData.Count; i++)
@@ -204,8 +203,8 @@ namespace NRWA_Communication_Acceptance
             if (cbFalseCRC.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Automatic False CRC");
                 await Task.Run(() => ShowSerialData("Automatic False CRC"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoFalseCRC = AutoCommands.FalseCRC();
                 iTotal += autoFalseCRC.Count;
                 for (int i = 0; i < autoFalseCRC.Count; i++)
@@ -218,8 +217,8 @@ namespace NRWA_Communication_Acceptance
             if (cbAppTellDataCast.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Application Telemetry Data Casting");
                 await Task.Run(() => ShowSerialData("Application Telemetry Data Casting"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoAppTelCom = AutoCommands.AppTelCom();
                 iTotal += autoAppTelCom.Count;
                 for (int i = 0; i < autoAppTelCom.Count; i++)
@@ -232,8 +231,8 @@ namespace NRWA_Communication_Acceptance
             if (cbAppTelData.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Application Telemetry Data Validation");
                 await Task.Run(() => ShowSerialData("Application Telemetry Data Validation"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoAppTelCom = AutoCommands.AddressSpecificCases();
                 iTotal += autoAppTelCom.Count;
                 for (int i = 0; i < autoAppTelCom.Count; i++)
@@ -243,25 +242,11 @@ namespace NRWA_Communication_Acceptance
                 }
             }
 
-            //if (cbPokeIncorrectData.Checked)
-            //{
-            //    iProgress += iStep;
-            //    //ShowSerialData("Auto Poke WIth Corrupt Data");
-            //    await Task.Run(() => ShowSerialData("Auto Poke WIth Corrupt Data"));
-            //    List<List<string>> autoPokeOutRangeData = AutoCommands.PokeWithCorruptData();
-            //    iTotal += autoPokeOutRangeData.Count;
-            //    for (int i = 0; i < autoPokeOutRangeData.Count; i++)
-            //    {
-            //        LogWriter.AppendLog(sSelectedPath, sFilename, "POKE-" + autoPokeOutRangeData[i][4], "Corrupt Data", autoPokeOutRangeData[i][0], autoPokeOutRangeData[i][1], autoPokeOutRangeData[i][2], autoPokeOutRangeData[i][3]);
-            //        if (autoPokeOutRangeData[i][3] == "TRUE" || autoPokeOutRangeData[i][3] == "True") { iPass++; }
-            //    }
-            //}
-
             if (cbEdgeCases.Checked)
             {
-                iProgress += iStep;
-                //ShowSerialData("Auto Peek-Poke");
+                iProgress += iStep;;
                 await Task.Run(() => ShowSerialData("Auto Edge Cases"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoedge = AutoCommands.EdgeCases();
                 iTotal += autoedge.Count;
                 for (int i = 0; i < autoedge.Count; i++)
@@ -274,8 +259,8 @@ namespace NRWA_Communication_Acceptance
             if (cbNACK.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Peek-Poke");
                 await Task.Run(() => ShowSerialData("Auto NACK CRC"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoNackCrc = AutoCommands.NackCrc();
                 iTotal += autoNackCrc.Count;
                 for (int i = 0; i < autoNackCrc.Count; i++)
@@ -285,11 +270,33 @@ namespace NRWA_Communication_Acceptance
                 }
             }
 
+            if (cbCounters.Checked)
+            {
+                if (cbNRWA.SelectedIndex == 0)
+                {
+                    iProgress += iStep;
+                    await Task.Run(() => ShowSerialData("Auto Telemetry Counters"));
+                    await Task.Run(() => ToolStripPrograss(iProgress));
+                    List<List<string>> autoCounters = AutoCommands.DRV110Counters();
+                    iTotal += autoCounters.Count;
+                    for (int i = 0; i < autoCounters.Count; i++)
+                    {
+                        LogWriter.AppendLog(sSelectedPath, sFilename, "TEL-COUNTER-" + autoCounters[i][4], "Telemetry Counter Increments", autoCounters[i][0], autoCounters[i][1], autoCounters[i][2], autoCounters[i][3]);
+                        if (autoCounters[i][3] == "TRUE" || autoCounters[i][3] == "True") { iPass++; }
+                    }
+                }
+                else
+                {
+                    await Task.Run(() => ShowSerialData("*Script only Configured for DRV110 Auto Telemetry Counters Test"));
+                }
+                
+            }
+
             if (cbCCC.Checked)
             {
                 iProgress += iStep;
-                //ShowSerialData("Auto Peek-Poke");
                 await Task.Run(() => ShowSerialData("Auto Command Code Cases"));
+                await Task.Run(() => ToolStripPrograss(iProgress));
                 List<List<string>> autoCCC = AutoCommands.CommandCodeCases();
                 iTotal += autoCCC.Count;
                 for (int i = 0; i < autoCCC.Count; i++)
@@ -299,6 +306,7 @@ namespace NRWA_Communication_Acceptance
                 }
             }
 
+            await Task.Run(() => ToolStripPrograss(100));
             ShowSerialData("DONE  Pass: " + iPass.ToString() + "\\" + iTotal.ToString()  + "\n");
 
         }
@@ -447,13 +455,13 @@ namespace NRWA_Communication_Acceptance
                 }
 
                 string json = r.ReadToEnd();
-                AutoCommands.NRWAvarObjects = JsonConvert.DeserializeObject<AutoCommands.Root>(json);
+                await Task.Run( () => AutoCommands.NRWAvarObjects = JsonConvert.DeserializeObject<AutoCommands.Root>(json));
 
             }
             catch (Exception ex)
             {
 
-                throw new Exception("Faled to load Configuration File");
+                throw new Exception("Faled to load Configuration File " + ex.Message);
             }
         }
 
@@ -485,13 +493,19 @@ namespace NRWA_Communication_Acceptance
             }
             else
             {
+
                 try
                 {
+
+                    await Task.Run(() => ToolStripPrograss(0));
                     this.Cursor = Cursors.WaitCursor;
+
+                    (iProgStep, iProgTot) = ProgressBarSetUp();
 
                     if (!rtbLog.Text.Contains("Creating Command Objects") )
                     {
                         await Task.Run(() => ShowSerialData("Creating Command Objects"));
+                        await Task.Run(() => ToolStripPrograss(2));
                         //ShowSerialData("Creating Command Objects");
                         CreateCommandObjects();
                     }
@@ -499,16 +513,17 @@ namespace NRWA_Communication_Acceptance
                     if (!rtbLog.Text.Contains("Deserialize NRWA variable Configuration"))
                     {
                         await Task.Run(() => ShowSerialData("Deserialize NRWA variable Configuration"));
+                        await Task.Run(() => ToolStripPrograss(4));
                         //ShowSerialData("Deserialize NRWA variable Configuration");
                         int iCase = cbNRWA.SelectedIndex;
-                        
                         await Task.Run(() => DeserializeJson(iCase));
                     }
 
                     await Task.Run(() => ShowSerialData("Verifying"));
                     //ShowSerialData("Verifying");
                     //(int iTotal, int iStep) = ProgressBarSetUp();
-                    Verify(0);
+                    await Task.Run(() => Verify(iProgStep));
+                   // Verify(iProgStep);
                     this.Cursor = Cursors.Default;
                 }
                 catch (Exception ex)
@@ -915,6 +930,7 @@ namespace NRWA_Communication_Acceptance
                 cbEdgeCases.CheckState = CheckState.Checked;
                 cbNACK.CheckState = CheckState.Checked;
                 cbCCC.CheckState = CheckState.Checked;
+                cbCounters.CheckState = CheckState.Checked;
             }
            
         }
@@ -928,7 +944,7 @@ namespace NRWA_Communication_Acceptance
 
         public delegate void ShowSerialDatadelegate(string r);
 
-        private void ShowSerialData(string s)
+        private async void ShowSerialData(string s)
         {
             if (rtbLog.InvokeRequired)
             {
@@ -963,7 +979,20 @@ namespace NRWA_Communication_Acceptance
 
 
         delegate void ToolStripPrograssDelegate(int value);
-        
+
+        private async void ToolStripPrograss(int value)
+        {
+            if (progressBar.InvokeRequired)
+            {
+                ToolStripPrograssDelegate del = new ToolStripPrograssDelegate(ToolStripPrograss);
+                progressBar.Invoke(del, new object[] { value });
+            }
+            else
+            {
+               progressBar.Value = value; // Your thingy with the progress bar..
+            }
+        }
+
         private (int, int) ProgressBarSetUp()
         {
             int iTotal = 0;
@@ -971,7 +1000,7 @@ namespace NRWA_Communication_Acceptance
 
             if (cbAll.Checked)
             {
-                iTotal = 10;
+                iTotal = 13;
                 iStep = Convert.ToInt32(Math.Floor(100 / (double)iTotal));
                 return (iStep, iTotal);
             }
@@ -994,6 +1023,14 @@ namespace NRWA_Communication_Acceptance
                 if (cbAppTelData.Checked)
                 { iTotal++; }
                 if (cbPokeIncorrectData.Checked)
+                { iTotal++; }
+                if (cbEdgeCases.Checked)
+                { iTotal++; }
+                if (cbNACK.Checked)
+                { iTotal++; }
+                if (cbCCC.Checked)
+                { iTotal++; }
+                if (cbCounters.Checked)
                 { iTotal++; }
 
                 iStep = Convert.ToInt32(Math.Floor(100 / (double)iTotal));
@@ -1033,6 +1070,12 @@ namespace NRWA_Communication_Acceptance
         {
             if (!cbNACK.Checked && cbAll.Checked)
             { cbCCC.CheckState = CheckState.Unchecked; }
+        }
+
+        private void cbCounters_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!cbNACK.Checked && cbAll.Checked)
+            { cbCounters.CheckState = CheckState.Unchecked; }
         }
     }
 }
