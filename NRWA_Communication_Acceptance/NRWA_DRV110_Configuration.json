@@ -372,7 +372,7 @@
               "field": "PWM Duty Cycle",
               "lenght": 2,
               "format": [ 16, 0 ],
-              "sign": true,
+              "sign": false,
               "initial": ""
             },
             {
@@ -406,28 +406,28 @@
             {
               "field": "DC-DC Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "FPGA Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "Motor driver Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             }
@@ -449,28 +449,28 @@
             {
               "field": "DC-DC Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "FPGA Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
             {
               "field": "Motor Driver Temperature",
               "lenght": 2,
-              "format": [ 12, 4 ],
+              "format": [ 14, 2 ],
               "sign": true,
               "initial": ""
             },
@@ -478,63 +478,63 @@
               "field": "Monitor 1V5 Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": "1.5"
             },
             {
               "field": "Monitor 3V3 Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": "3.3"
             },
             {
               "field": "Monitor 5V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": "5"
             },
             {
               "field": "Monitor 12V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": "12"
             },
             {
               "field": "Monitor 24V Supply Voltage",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": "24"
             },
             {
               "field": "Monitor 1V5 Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Monitor 3V3 Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Monitor 5V Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Monitor 12V Supply Current",
               "lenght": 4,
               "format": [ 16, 16 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
@@ -569,168 +569,168 @@
               "field": "Uptime Count",
               "lenght": 4,
               "format": [ 30, 2 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "EDAC Correctable SEU Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "EDAC Error SEU Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "EDAC Write Usage",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "EDAC Read Usage",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "EDAC Scrub Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD Bytes Received Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD Bytes Received Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "TXD Bytes Transmitted Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-TXD Bytes Transmitted Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD UART Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD UART Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD NSP ACK Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD NSP ACK Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD SLIP Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD SLIP Frame Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD NSP CRC Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD NSP CRC Error Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "RXD NSP Discarded Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "R-RXD NSP Discarded Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Revolution Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Hall Skip Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Drive Fault Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             },
             {
               "field": "Drive Overtemperature Count",
               "lenght": 4,
               "format": [ 32, 0 ],
-              "sign": false,
+              "sign": true,
               "initial": ""
             }
           ]

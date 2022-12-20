@@ -904,6 +904,11 @@ namespace NRWA_Communication_Acceptance
                             b_data = l_AppTelBlock[i].Skip(iPos).Take(j_lenght).ToArray();
                             b_value = new byte[4] { 0x00, 0x00, 0x00, 0x00 };
 
+                            if (j_field == "RXD SLIP Frame Error Count")
+                            { }
+
+
+
                             if (j_lenght == 1)
                             { b_value[3] = b_data[0]; }
                             if (j_lenght == 2)
@@ -976,7 +981,7 @@ namespace NRWA_Communication_Acceptance
                                     addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
                                     addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
                                     addSpecCase[k].Add("");
-                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add(BitConverter.ToString(b_data));
                                     addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: " + Initial.ToString().Replace(',', '.'));
                                     addSpecCase[k].Add("TRUE");
                                 }
@@ -985,7 +990,7 @@ namespace NRWA_Communication_Acceptance
                                     addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
                                     addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
                                     addSpecCase[k].Add("");
-                                    addSpecCase[k].Add("");
+                                    addSpecCase[k].Add(BitConverter.ToString(b_data));
                                     addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: " + Initial.ToString().Replace(',', '.'));
                                     addSpecCase[k].Add("FALSE");
                                 }
@@ -999,7 +1004,7 @@ namespace NRWA_Communication_Acceptance
                                 addSpecCase[k].Add("APP-TEL " + NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Designation);
                                 addSpecCase[k].Add(NRWAvarObjects.NRWA_Config_DRV110[1].NRWA_Telemetry[i].Data[j].field);
                                 addSpecCase[k].Add("");
-                                addSpecCase[k].Add("");
+                                addSpecCase[k].Add(BitConverter.ToString(b_data));
                                 addSpecCase[k].Add("Received: " + Value.ToString().Replace(',', '.') + " Expected: -");
                                 addSpecCase[k].Add("TRUE");
                             }
@@ -1013,7 +1018,6 @@ namespace NRWA_Communication_Acceptance
                     throw;
                 }
 
-                
             }
 
             return addSpecCase;
