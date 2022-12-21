@@ -496,7 +496,7 @@ namespace NRWA_Communication_Acceptance
 
                 try
                 {
-
+                    int iCase = cbNRWA.SelectedIndex;
                     await Task.Run(() => ToolStripPrograss(0));
                     this.Cursor = Cursors.WaitCursor;
 
@@ -515,14 +515,13 @@ namespace NRWA_Communication_Acceptance
                         await Task.Run(() => ShowSerialData("Deserialize NRWA variable Configuration"));
                         await Task.Run(() => ToolStripPrograss(4));
                         //ShowSerialData("Deserialize NRWA variable Configuration");
-                        int iCase = cbNRWA.SelectedIndex;
                         await Task.Run(() => DeserializeJson(iCase));
                     }
 
                     await Task.Run(() => ShowSerialData("Verifying"));
                     //ShowSerialData("Verifying");
                     //(int iTotal, int iStep) = ProgressBarSetUp();
-                    await Task.Run(() => Verify(iProgStep));
+                    Verify(iProgStep);
                    // Verify(iProgStep);
                     this.Cursor = Cursors.Default;
                 }

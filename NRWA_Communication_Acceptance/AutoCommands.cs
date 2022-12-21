@@ -9,6 +9,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 
 namespace NRWA_Communication_Acceptance
@@ -1324,15 +1325,147 @@ namespace NRWA_Communication_Acceptance
             List<List<string>> counters = new List<List<string>>();
             byte[] rData = null;
             bool bPass = false;
-            string sTX, sRX, sCommand, sData;
+            string sTX = "", sRX = "", sCommand = "", sData = "";
+
+            (bool bFound, bool bAck, string sRFeedback, byte[] a_TX, byte[] a_RX, byte[] Data, byte[] bRecCRC) = NRWA_Cmnds.cmnd_AppTel(NRWA_FirmVer._serialPort, 0x07, 0x11, new byte[1] { 0x02 });
+
+            if (bFound && Data.Length == 100)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    counters.Add(new List<string>());
+                    
+                    for (int j = 0; j < 5; j++)
+                    {
+                        counters[i].Add("");
+                    }
+                }
+
+                counters[0][0] = BitConverter.ToString(Data.Skip(4).Take(4).ToArray());
+                double uptimeCount = intToQ((int)BitConverter.ToUInt32(Data.Skip(4).Take(4).ToArray(), 0), 2);
+
+                counters[1][0] = BitConverter.ToString(Data.Skip(28).Take(4).ToArray());
+                int bytesReceived = BitConverter.ToInt32(Data.Skip(28).Take(4).ToArray(), 0);
+
+                counters[2][0] = BitConverter.ToString(Data.Skip(36).Take(4).ToArray());
+                int bytesTransmitted = BitConverter.ToInt32(Data.Skip(36).Take(4).ToArray(), 0);
+
+                counters[3][0] = BitConverter.ToString(Data.Skip(52).Take(4).ToArray());
+                int nspAck = BitConverter.ToInt32(Data.Skip(52).Take(4).ToArray(), 0);
+
+                counters[4][0] = BitConverter.ToString(Data.Skip(60).Take(4).ToArray());
+                int slipFrameErr = BitConverter.ToInt32(Data.Skip(60).Take(4).ToArray(), 0);
+
+                counters[5][0] = BitConverter.ToString(Data.Skip(68).Take(4).ToArray());
+                int nspCrc = BitConverter.ToInt32(Data.Skip(68).Take(4).ToArray(), 0);
+
+                counters[6][0] = BitConverter.ToString(Data.Skip(76).Take(4).ToArray());
+                int nspDiscarded = BitConverter.ToInt32(Data.Skip(76).Take(4).ToArray(), 0);
 
 
+                // Uptime Counter, Bytes Received, Bytes Transmitted, NSP ACK 
+                (bFound,bAck, sRFeedback, a_TX, a_RX, Data, bRecCRC) = NRWA_Cmnds.cmnd_AppTel(NRWA_FirmVer._serialPort, 0x07, 0x11, new byte[1] { 0x02 });
+                
+                counters[0][1] = BitConverter.ToString(Data.Skip(4).Take(4).ToArray());
+                double uptimeCountNew = intToQ((int)BitConverter.ToUInt32(Data.Skip(4).Take(4).ToArray(), 0), 2);
+                counters[0][2] = "Before: " + uptimeCount.ToString() + " After: " + uptimeCountNew.ToString();
+                if (uptimeCountNew > uptimeCount)
+                {
+                    counters[0][3] = "TRUE";
+                }
+                else
+                {
+                    counters[0][3] = "FALSE";
+                }
+                counters[0][4] = "Uptime Counter";
 
-            counters[counters.Count - 1].Add(sTX);
-            counters[counters.Count - 1].Add(sRX);
-            counters[counters.Count - 1].Add("");
-            counters[counters.Count - 1].Add(bPass.ToString());
-            counters[counters.Count - 1].Add("Uptime Counter");
+
+                counters[1][1] = BitConverter.ToString(Data.Skip(28).Take(4).ToArray());
+                int bytesReceivedNew = BitConverter.ToInt32(Data.Skip(28).Take(4).ToArray(), 0);
+                counters[1][2] = "Before: " + bytesReceived.ToString() + " After: " + bytesReceivedNew.ToString();
+                if (bytesReceivedNew > bytesReceived)
+                {
+                    counters[1][3] = "TRUE";
+                }
+                else
+                {
+                    counters[1][3] = "FALSE";
+                }
+                counters[1][4] = "Bytes Received";
+
+
+                counters[2][1] = BitConverter.ToString(Data.Skip(36).Take(4).ToArray());
+                int bytesTransmittedNew = BitConverter.ToInt32(Data.Skip(36).Take(4).ToArray(), 0);
+                counters[2][2] = "Before: " + bytesTransmitted.ToString() + " After: " + bytesTransmittedNew.ToString();
+                if (bytesTransmittedNew > bytesTransmitted)
+                {
+                    counters[2][3] = "TRUE";
+                }
+                else
+                {
+                    counters[2][3] = "FALSE";
+                }
+                counters[2][4] = "Bytes Transmitted";
+
+
+                counters[3][1] = BitConverter.ToString(Data.Skip(52).Take(4).ToArray());
+                int nspAckNew = BitConverter.ToInt32(Data.Skip(52).Take(4).ToArray(), 0);
+                counters[3][2] = "Before: " + nspAck.ToString() + " After: " + nspAckNew.ToString();
+                if (nspAckNew > nspAck)
+                {
+                    counters[3][3] = "TRUE";
+                }
+                else
+                {
+                    counters[3][3] = "FALSE";
+                }
+                counters[3][4] = "NSP ACK";
+
+
+                //CRC Error, SLIP Error, NSP Discard
+                byte[] incorrectReply = NRWA_Cmnds.cmnd_Gen(NRWA_FirmVer._serialPort, new byte[12] { 0x0C, 0x07, 0x11, 0x83, 0x07, 0xDB, 0x44, 0xDB, 0xAB, 0xFF, 0xF6, 0xC0 });
+
+                counters[4][1] = BitConverter.ToString(Data.Skip(60).Take(4).ToArray());
+                int slipFrameErrNew = BitConverter.ToInt32(Data.Skip(60).Take(4).ToArray(), 0);
+                counters[4][2] = "Before: " + slipFrameErr.ToString() + " After: " + slipFrameErrNew.ToString();
+                if (slipFrameErrNew > slipFrameErr)
+                {
+                    counters[4][3] = "TRUE";
+                }
+                else
+                {
+                    counters[4][3] = "FALSE";
+                }
+                counters[4][4] = "SLIP Frame Error";
+
+                counters[5][1] = BitConverter.ToString(Data.Skip(68).Take(4).ToArray());
+                int nspCrcNew = BitConverter.ToInt32(Data.Skip(68).Take(4).ToArray(), 0);
+                counters[5][2] = "Before: " + nspCrc.ToString() + " After: " + nspCrcNew.ToString();
+                if (nspCrcNew > nspCrc)
+                {
+                    counters[5][3] = "TRUE";
+                }
+                else
+                {
+                    counters[5][3] = "FALSE";
+                }
+                counters[5][4] = "NSP Crc";
+
+                counters[6][1] = BitConverter.ToString(Data.Skip(76).Take(4).ToArray());
+                int nspDiscardedNew = BitConverter.ToInt32(Data.Skip(76).Take(4).ToArray(), 0);
+                counters[6][2] = "Before: " + nspDiscarded.ToString() + " After: " + nspDiscardedNew.ToString();
+                if (nspDiscardedNew > nspDiscarded)
+                {
+                    counters[6][3] = "TRUE";
+                }
+                else
+                {
+                    counters[6][3] = "FALSE";
+                }
+                counters[6][4] = "NSP Discard";
+
+
+            }
 
             return counters;
         }
